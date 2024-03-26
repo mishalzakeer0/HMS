@@ -1,6 +1,7 @@
 const pool = require('./db_pool')
 const mysql = require('mysql2')
 
+console.log("user",process.env.DB_USER)
 const allPt = async () => {
     pool.query("select * from patients").then(([result])=>{
         console.log(result)
@@ -19,15 +20,15 @@ const ptById = async (id) =>{
     })
 }
 
-const searchPt = async (key, value) => {
+const searchPt = async (key1, value1, key2, value2) => {
     try {
-        console.log(key, value);
-        const [result] = await pool.query("SELECT * FROM patients WHERE ?? = ?;", [key, value]);
+        // console.log(key1, value1, key2, value2);
+        const [result] = await pool.query("SELECT * FROM patients WHERE ?? = ? and ?? = ?;", [key1, value1, key2, value2]);
         console.log(result);
         return result;
     } catch (err) {
         console.log("error while executing searchPt query: ", err);
-        throw err; r
+        throw err;
     }
 };
 
@@ -46,4 +47,28 @@ const deletePt = async (key, value) => {
     }
 };
 
-deletePt('first_name', 'Michael');
+const createPt = async (first_name, last_name, age, gender, email, phone, address, city, state, country, postal_code, registration_date) => {
+    try {
+        const sql = "INSERT INTO patients (first_name, last_name, age, gender, email, phone, address, city, state, country, postal_code, registration_date) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+        const values = [first_name, last_name, age, gender, email, phone, address, city, state, country, postal_code, registration_date];
+        const [result] = await pool.query(sql, values);
+        console.log(result);
+        return result;
+    } catch (err) {
+        console.log("error while executing createPt query: ", err);
+        throw err;
+    }
+};
+
+// createPt('mz', 'mzm', 18, 'Male', 'mishal@bititude.com', '123-123-1243', 'jannah(H)', 'CL', 'IND', '673003', '2023-03-15');
+
+searchPt('first_name', 'mz', 'phone', '123-123-1243')
+
+module.exports = {
+    allPt,
+    ptById,
+    searchPt,
+    deletePt,
+    createPt
+}
+    
