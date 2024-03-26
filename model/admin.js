@@ -45,3 +45,10 @@ const createAdmin = async  (username, password, email)  => {
     }
 
 };
+
+module.exports = {
+    allAdmin,
+    adminById,
+    deleteAdmin,
+    createAdmin
+}

@@ -46,4 +46,11 @@ const createAppointment = async (patient_id, doctor_id, appointment_date,) => {
 
 };
 
+module.exports = {
+    allAppointments,
+    appointmentById,
+    deleteAppointment,
+    createAppointment
+}
+
 // deleteAppointment('appointment_id', 11);

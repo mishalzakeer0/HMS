@@ -52,4 +52,12 @@ const createDoctor = async(req,res,next)=>{
     }
 }
 
-createDoctor()
+
+module.exports = {
+    getAlldr,
+    doctor,
+    searchDoctor,
+    deleteDoctor,
+    createDoctor
+}
+// createDoctor()

@@ -45,3 +45,11 @@ const createMessage = async (first_name, last_name, age, gender, message) => {
     }
 
 };
+
+module.exports = {
+    allMessages,
+    messageById,
+    deleteMessage,
+    createMessage
+
+}
