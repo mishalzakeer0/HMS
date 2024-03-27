@@ -8,11 +8,12 @@ const doctor = require('../controller/doctor');
 const appointment = require('../controller/appointment');
 const message = require('../controller/message');
 
-route.post('/Login', Middleware.patientLogin, (req, res) => {
+route.post('/patient/Login', Middleware.patientLogin, (req, res) => {
     res.status(200).send("Login Successful");
 });
 
 route.get('/detail', Middleware.authToken, patient.patient, (req, res) => {
+    const id = req.body;
     res.status(200).send("Error: Cannot get patient details");
 });
 

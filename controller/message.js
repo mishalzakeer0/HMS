@@ -5,7 +5,7 @@ const getAllMsg = async(req,res,next)=>{
          const msg = await msg_db.allMessages();  
          res.status(200).send(msg);
      }  catch(err){
-         next(err)
+         throw err
  }
  };
 
@@ -15,28 +15,28 @@ const getAllMsg = async(req,res,next)=>{
         const msg = await msg_db.messageById(id);
         res.status(200).send(msg);
     } catch(err){
-        next(err)
+        throw err
     }
 };
 
 const deleteMsg = async(req,res,next)=>{
     try{
-        const{key, value} = req.body;
-        const msg = await msg_db.deleteMessage(key,value)
+        const{key1, value1, key2, value2} = req.body;
+        const msg = await msg_db.deleteMessage(key1,value1,key2,value2)
         res.status(200).send(msg); 
     }catch(err){
-        next(err)
+        throw err
     }
 }
 
 const createMsg = async(req,res,next)=>{
     try{
         const{first_name, last_name, age, gender, message} = req.body;
-        const msg = await pt_db.createPt(first_name, last_name, age, gender, message);
+        const msg = await msg_db.createMessage(first_name, last_name, age, gender, message);
         res.status(200).send(msg)
         
     }catch(err){
-        next(err)
+        throw err
 
     }
 }

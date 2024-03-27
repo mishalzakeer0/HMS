@@ -6,7 +6,7 @@ const getAllAd = async(req,res,next)=>{
          const admins = await ad_db.allAdmin();  
          res.status(200).send(admins);
      }  catch(err){
-         next(err)
+         console.log("get all admin failed", err);
  }
  };
 
@@ -16,7 +16,7 @@ const getAllAd = async(req,res,next)=>{
         const ad = await ad_db.adminById(id);
         res.status(200).send(ad);
     } catch(err){
-        next(err)
+        console.log("admin by id failed",err);
     }
 };
 
@@ -26,19 +26,28 @@ const deleteAd = async(req,res,next)=>{
         const ad = await ad_db.deleteAdmin(key,value)
         res.status(200).send(ad); 
     }catch(err){
-        next(err)
+        console.log("error while delete Admin",err);
     }
 }
 
 const createAd = async(req,res,next)=>{
     try{
         const{username, password, email} = req.body;
-        const ad = await pt_db.createPt(username, password, email);
+        const ad = await ad_db.createAdmin(username, password, email);
         res.status(200).send(ad)
         
     }catch(err){
-        next(err)
+        console.log("error in createAd",err)
 
+    }
+}
+const searchAd = async(req, res, next)=>{
+    try{
+        const{username, password} = req.body;
+        const ad = await ad_db.searchAdmin(username,password);
+        res.status.send(ad)
+    }catch(err) {
+        console.log("error in searchAd",err);
     }
 }
 
@@ -46,5 +55,6 @@ module.exports = {
     getAllAd,
     admin,
     deleteAd,
-    createAd
+    createAd,
+    searchAd
 }

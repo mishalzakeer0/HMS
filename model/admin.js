@@ -29,7 +29,7 @@ const deleteAdmin = async (key, value) => {
         return result;
     } catch (err) {
         console.log("error while executing deleteAdmin query: ", err);
-        throw err;
+        
     }
 };
 
@@ -46,9 +46,19 @@ const createAdmin = async  (username, password, email)  => {
 
 };
 
+const searchAdmin = async (username, password) => {
+    try {
+        const [result] = await pool.query("select * from admin where username = ? and password = ?;" ,[username,password]);
+        return result 
+    } catch(err) {
+        console.log("search Admin query is failed",err)
+    }
+}
+
 module.exports = {
     allAdmin,
     adminById,
     deleteAdmin,
-    createAdmin
+    createAdmin,
+    searchAdmin
 }

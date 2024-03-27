@@ -41,7 +41,7 @@ const patientLogin = async (req, res, next) => {
       { expiresIn: "5m" }
     );
     const [{id}] = validUser 
-
+      
     res.status(200).send({ message: "Valid Patient", token, id });
 
     next();

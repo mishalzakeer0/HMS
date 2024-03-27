@@ -5,7 +5,7 @@ const getAlldr = async(req,res,next)=>{
         const doctors = await dr_db.allDr();  
         res.status(200).send(doctors);
     }  catch(err){
-        next(err)
+        throw err
 }
 };
 
@@ -16,7 +16,7 @@ const doctor = async(req,res,next)=>{
         const dr = await dr_db.drById(id);
         res.status(200).send(dr);
     } catch(err){
-        next(err)
+        throw err
     }
 };
 
@@ -26,17 +26,17 @@ const searchDoctor = async(req,res,next)=>{
         const dr = await dr_db.searchDr(key,value)
         res.status(200).send(dr);
     }catch(err){
-        next(err)
+        throw err
     }
 }
 
 const deleteDoctor = async(req,res,next)=>{
     try{
-        const{key, value} = req.body;
-        const dr = await dr_db.deleteDr(key,value)
+        const{key1, value1, key2, value2} = req.body;
+        const dr = await dr_db.deleteDr(key1,value1,key2,value2)
         res.status(200).send(dr); 
     }catch(err){
-        next(err)
+        throw err
     }
 }
 
@@ -47,7 +47,7 @@ const createDoctor = async(req,res,next)=>{
         res.status(200).send(dr)
         
     }catch(err){
-        next(err)
+        throw err
 
     }
 }
@@ -60,4 +60,3 @@ module.exports = {
     deleteDoctor,
     createDoctor
 }
-// createDoctor()

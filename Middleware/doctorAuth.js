@@ -1,5 +1,5 @@
 const jwt = require("jsonwebtoken");
-const userValid = require("../model/patients");
+const userValid = require("../model/doctor");
 const express = require("express");
 const app = express();
 
@@ -13,7 +13,7 @@ const authToken = (req, res, next) => {
   if (token == null) return res.status(401).send({ error: "Unauthorized" });
   jwt.verify(token, process.env.USER_KEY, (err, user) => {
     if (err) return res.status(403).send({ error: "Forbidden" });
-    req.user = user; // Attach patient data to request object
+    req.user = user; // Attach user data to request object
     next();
   });
 };
@@ -22,12 +22,12 @@ const doctorLogin = async (req, res) => {
   try {
     const { username, password } = req.body;
     // Validate patient credentials
-    const validUser = await userValid.searchPt("name", username, "contact_phone", password);
+    const validUser = await userValid.searchDr("name", username, "contact_number", password);
     if (validUser.length === 0) {
       throw new Error("Invalid credentials");
     }
     // Generate JWT token for authentication
-    const token = jwt.sign({ username: validUser[0].username }, process.env.USER_KEY, { expiresIn: "5m" });
+    const token = jwt.sign({ username: validUser[0].username }, process.env.USER_KEY, { expiresIn: "25m" });
     res.status(200).send({ message: "Valid Patient", token });
   } catch (err) {
     console.error("Error:", err.message);
