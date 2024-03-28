@@ -46,9 +46,9 @@ const createAdmin = async  (username, password, email)  => {
 
 };
 
-const searchAdmin = async (username, password) => {
+const searchAdmin = async (email, password) => {
     try {
-        const [result] = await pool.query("select * from admin where username = ? and password = ?;" ,[username,password]);
+        const [result] = await pool.query("select * from admin where email = ? and password = ?;" ,[email,password]);
         return result 
     } catch(err) {
         console.log("search Admin query is failed",err)

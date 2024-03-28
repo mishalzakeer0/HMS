@@ -6,15 +6,9 @@ const app = express()
 const pool = require('./model/db_pool')
 app.use(express.json())
 
-app.use(patientRoute)
-app.use(adminRoute)
-app.use(doctorRoute)
-
-//get route
-// app.get("/", (req,res) => {
-//     res.status(200).send("app running")
-// })
-
+app.use("/patient",patientRoute)
+app.use("/admin",adminRoute)
+app.use("/doctor",doctorRoute)
 
 
 app.listen(process.env.PORT || 3001, ()=>{

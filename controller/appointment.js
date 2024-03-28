@@ -1,5 +1,5 @@
 const ap_db = require('../model/appointment');
-
+const {body , validationResult} = require('express-validator')
 const getAllAp = async(req,res,next)=>{
     try{
          const appointment = await ap_db.allAppointments();  
@@ -12,6 +12,10 @@ const getAllAp = async(req,res,next)=>{
  const appointment = async(req,res,next)=>{
     try{
         const {appointment_id} = req.body
+        if (!errors.isEmpty()) {
+            res.status(401).send(errors.array()[0].msg)
+            
+          }
         const ap = await ap_db.appointmentById(appointment_id);
         res.status(200).send(ap);
     } catch(err){
@@ -32,6 +36,11 @@ const deleteAp = async(req,res,next)=>{
 const createAp = async(req,res,next)=>{
     try{
         const{patient_id, doctor_id, appointment_date} = req.body;
+        const errors = validationResult(req)
+        if (!errors.isEmpty()) {
+            res.status(401).send(errors.array()[0].msg)
+            return errors
+        }
         const ap = await ap_db.createAppointment(patient_id, doctor_id, appointment_date);
         res.status(200).send(ap)
         

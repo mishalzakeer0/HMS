@@ -1,6 +1,7 @@
 const jwt = require("jsonwebtoken");
 const userValid = require("../model/doctor");
 const express = require("express");
+const { validationResult } = require("express-validator");
 const app = express();
 
 // Middleware to parse JSON bodies
@@ -21,8 +22,14 @@ const authToken = (req, res, next) => {
 const doctorLogin = async (req, res) => {
   try {
     const { username, password } = req.body;
+    const errors = validationResult(req)
+    if (!errors.isEmpty()) {
+      res.status(401).send(errors.array()[0].msg)
+      
+    }
     // Validate patient credentials
-    const validUser = await userValid.searchDr("name", username, "contact_number", password);
+    const validUser = await userValid.searchDr("email", username, "password", password);
+
     if (validUser.length === 0) {
       throw new Error("Invalid credentials");
     }

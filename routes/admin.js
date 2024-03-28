@@ -1,111 +1,233 @@
-const express = require('express');
+const express = require("express");
 const app = express();
-require('dotenv').config();
-const Middleware = require('../Middleware/adminAuth');
+require("dotenv").config();
+const Middleware = require("../Middleware/adminAuth");
 const route = express.Router();
-const patient = require('../controller/patients');
-const admin = require('../controller/admin');
-const appointment = require('../controller/appointment');
-const doctor = require('../controller/doctor');
-const message = require('../controller/message');
+const patient = require("../controller/patients");
+const admin = require("../controller/admin");
+const appointment = require("../controller/appointment");
+const doctor = require("../controller/doctor");
+const message = require("../controller/message");
+const { body, validationResult } = require("express-validator");
 
-// login & signUp
-route.post('/admin/Login', Middleware.adminLogin, (req, res) => {
+// login
+route.post(
+  "/Login",
+  body("username").isEmail().withMessage("Enter a valid Email"),
+  Middleware.adminLogin,
+  (req, res) => {
     res.status(200).send("Login Successful");
-});
-
-route.post('/admin/signUp', Middleware.authToken, admin.createAd, (req, res) => {
-    res.status(200).send("SignUp Completed");
-});
+  }
+);
 
 // patient route
-route.get('/admin/patient/detail', Middleware.authToken, patient.patient, (req, res) => {
+route.get(
+  "/patient/detail",
+  body("patient_id").isInt().withMessage("enter your valid patient id"),
+  Middleware.authToken,
+  patient.patient,
+  (req, res) => {
     const id = req.body;
     res.status(200).send("Error: Cannot get patient details");
-});
+  }
+);
 
-route.get('/admin/patient/create', Middleware.authToken, patient.createPt, (req, res) => {
+route.post(
+  "/patient/create",
+  body("age").isInt().withMessage("enter a valid age"),
+  body("email").isEmail().withMessage("enter a valid email"),
+  body("phone").isMobilePhone().withMessage("enter a valid phone number"),
+  body("postal_code").isPostalCode().withMessage("enter a valid postal code"),
+  body("registration_date").isDate().withMessage("enter a valid date"),
+  body("password").isStrongPassword().withMessage("enter a strong password"),
+  Middleware.authToken,
+  patient.createPt,
+  (req, res) => {
     res.status(200).send("Error: Cannot create patient");
-});
+  }
+);
 
-route.get('/admin/patient/delete', Middleware.authToken, patient.deletePt, (req, res) => {
+route.delete(
+  "/patient/delete",
+  Middleware.authToken,
+  patient.deletePt,
+  (req, res) => {
     res.status(200).send("Error: Cannot delete patient");
-});
+  }
+);
 
-route.get('/admin/patient/all', Middleware.authToken, patient.getAllPt, (req, res) => {
+route.get(
+  "/patient/all",
+  Middleware.authToken,
+  patient.getAllPt,
+  (req, res) => {
     res.status(200).send("Error: Cannot get all patients");
-});
+  }
+);
 
-route.get('/admin/patient/search', Middleware.authToken, patient.searchPt, (req, res) => {
+route.get(
+  "/patient/search",
+  Middleware.authToken,
+  patient.searchPt,
+  (req, res) => {
     res.status(200).send("Error: Cannot search for patients");
-});
+  }
+);
 
 // doctor route
-route.get('/admin/doctor/create', Middleware.authToken, doctor.createDoctor, (req, res) => {
+route.post(
+  "/doctor/create",
+  body("experience_years")
+    .isInt()
+    .withMessage("enter a valid experience_years"),
+  body("contact_number")
+    .isMobilePhone()
+    .withMessage("enter a valid phone number"),
+  body("email").isEmail().withMessage("enter a valid email"),
+  body("password").isStrongPassword().withMessage("enter a strong password"),
+  Middleware.authToken,
+  doctor.createDoctor,
+  (req, res) => {
     res.status(200).send("Error: Cannot create doctor");
-});
+  }
+);
 
-route.get('/admin/doctor/delete', Middleware.authToken, doctor.deleteDoctor, (req, res) => {
+route.delete(
+  "/doctor/delete",
+  Middleware.authToken,
+  doctor.deleteDoctor,
+  (req, res) => {
     res.status(200).send("Error: Cannot delete doctor");
-});
+  }
+);
 
-route.get('/admin/doctor/DrById', Middleware.authToken, doctor.doctor, (req, res) => {
+route.get(
+  "/doctor/DrById",
+  body("doctor_id").isInt().withMessage("enter your valid doctor id"),
+  Middleware.authToken,
+  doctor.doctor,
+  (req, res) => {
     res.status(200).send("Error: Cannot get doctor by ID");
+  }
+);
+
+route.get("/doctor/all", Middleware.authToken, doctor.getAlldr, (req, res) => {
+  res.status(200).send("Error: Cannot get all doctors");
 });
 
-route.get('/admin/doctor/all', Middleware.authToken, doctor.getAlldr, (req, res) => {
-    res.status(200).send("Error: Cannot get all doctors");
-});
-
-route.get('/admin/doctor/search', Middleware.authToken, doctor.searchDoctor, (req, res) => {
+route.get(
+  "/doctor/search",
+  Middleware.authToken,
+  doctor.searchDoctor,
+  (req, res) => {
     res.status(200).send("Error: Cannot search for doctors");
-});
+  }
+);
 
 // appointment route
-route.get('/admin/appointment/create', Middleware.authToken, appointment.createAp, (req, res) => {
+route.post(
+  "/appointment/create",
+  body("patient_id").isInt().withMessage("enter your valid patient id"),
+  body("doctor_id").isInt().withMessage("enter a valid doctor id"),
+  body("appointment_date").isDate().withMessage("enter a valid date"),
+  Middleware.authToken,
+  appointment.createAp,
+  (req, res) => {
     res.status(200).send("Error: Cannot create appointment");
-});
+  }
+);
 
-route.get('/admin/appointment/delete', Middleware.authToken, appointment.deleteAp, (req, res) => {
+route.delete(
+  "/appointment/delete",
+  Middleware.authToken,
+  appointment.deleteAp,
+  (req, res) => {
     res.status(200).send("Error: Cannot delete appointment");
-});
+  }
+);
 
-route.get('/admin/appointment/all', Middleware.authToken, appointment.getAllAp, (req, res) => {
+route.get(
+  "/appointment/all",
+  Middleware.authToken,
+  appointment.getAllAp,
+  (req, res) => {
     res.status(200).send("Error: Cannot get all appointments");
-});
+  }
+);
 
-route.get('/admin/appointment/id', Middleware.authToken, appointment.appointment, (req, res) => {
+route.get(
+  "/appointment/id",
+  body("appointment_id").isInt().withMessage("enter your valid appointment id"),
+  Middleware.authToken,
+  appointment.appointment,
+  (req, res) => {
     res.status(200).send("Error: Cannot get appointment by ID");
-});
+  }
+);
 
 // admin route
-route.get('/admin/create', Middleware.authToken, admin.createAd, (req, res) => {
+route.post(
+  "/create",
+  body("email").isEmail().withMessage("Enter a valid Email"),
+  body("password").isStrongPassword().withMessage("enter a strong password"),
+  Middleware.authToken,
+  admin.createAd,
+  (req, res) => {
     res.status(200).send("Error: Cannot create admin");
+  }
+);
+
+route.delete("/delete", Middleware.authToken, admin.deleteAd, (req, res) => {
+  res.status(200).send("Error: Cannot delete admin");
 });
 
-route.get('/admin/delete', Middleware.authToken, admin.deleteAd, (req, res) => {
-    res.status(200).send("Error: Cannot delete admin");
-});
-
-route.get('/admin/Id', Middleware.authToken, admin.admin, (req, res) => {
+route.get(
+  "/Id",
+  body("id").isInt().withMessage("enter your valid id"),
+  Middleware.authToken,
+  admin.admin,
+  (req, res) => {
     res.status(200).send("Error: Cannot get admin by ID");
-});
+  }
+);
 
 // message route
-route.get('/admin/message/create', Middleware.authToken, message.createMsg, (req, res) => {
+route.post(
+  "/message/create",
+  body("age").isInt().withMessage("enter a valid age"),
+  Middleware.authToken,
+  message.createMsg,
+  (req, res) => {
     res.status(200).send("Error: Cannot create message");
-});
+  }
+);
 
-route.get('/admin/message/delete', Middleware.authToken, message.deleteMsg, (req, res) => {
+route.delete(
+  "/message/delete",
+  Middleware.authToken,
+  message.deleteMsg,
+  (req, res) => {
     res.status(200).send("Error: Cannot delete message");
-});
+  }
+);
 
-route.get('/admin/message/Id', Middleware.authToken, message.msg, (req, res) => {
+route.get(
+  "/message/Id",
+  body("id").isInt().withMessage("enter your valid id"),
+  Middleware.authToken,
+  message.msg,
+  (req, res) => {
     res.status(200).send("Error: Cannot get message by ID");
-});
+  }
+);
 
-route.get('/admin/message/all', Middleware.authToken, message.getAllMsg, (req, res) => {
+route.get(
+  "/message/all",
+  Middleware.authToken,
+  message.getAllMsg,
+  (req, res) => {
     res.status(200).send("Error: Cannot get all messages");
-});
+  }
+);
 
 module.exports = route;
