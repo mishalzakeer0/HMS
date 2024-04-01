@@ -1,5 +1,6 @@
 const { where } = require('sequelize');
-const pool = require('./db_pool')
+const pool = require('./db_pool');
+const { raw } = require('mysql2');
 
 const allPt = async () => {
   try {
@@ -49,7 +50,8 @@ const deletePt = async (key1, value1, key2,value2) => {
       where:{
       [key1]: value1,
       [key2]: value2
-    }}
+    }, 
+  raw: true}
     );
     return result;
   } catch (err) {
@@ -73,23 +75,10 @@ const createPt = async (
   registration_date
 ) => {
   try {
-    const sql = pool.Patient.create
+    const result = pool.Patient.create({first_name: first_name, last_name: last_name, age: age, gender: gender, email: email, phone: phone, address: address, city: city, state: state, country: country, postal_code: postal_code, registration_date: registration_date})
      
-    const values = [
-      first_name,
-      last_name,
-      age,
-      gender,
-      email,
-      phone,
-      address,
-      city,
-      state,
-      country,
-      postal_code,
-      registration_date,
-    ];
-    const result = await pool.query(sql, values);
+;
+    
     // console.log(result);
     return result;
   } catch (err) {
