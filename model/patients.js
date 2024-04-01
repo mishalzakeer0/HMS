@@ -1,57 +1,62 @@
-const pool = require("./db_pool");
-const mysql = require("mysql2");
+const { where } = require('sequelize');
+const pool = require('./db_pool')
 
-console.log("user", process.env.DB_USER);
 const allPt = async () => {
   try {
-    const [result] = await pool.query("select * from patients");
+    const result = await pool.Patient.findAll({raw: true});
+    // console.log(result)
     return result;
   } catch (err) {
     console.log("error while selecting all patients", err);
   }
 };
 
+// console.log(allPt())
+
 const ptById = async (id) => {
   try {
-    const [result] = await pool.query(
-      "Select * from patients where id = ?",
-      id
-    );
+    const result = await pool.Patient.findOne({ where: { id: id }, raw: true});
+    // console.log(result)
     return result;
   } catch (err) {
     console.log("error while selecting patient by id", err);
   }
 };
 
+// console.log(ptById(5))
+
+
 const searchPt = async (key1, value1, key2, value2) => {
   try {
-    const [result] = await pool.query(
-      "SELECT * FROM patients WHERE ?? = ? and ?? = ?;",
-      [key1, value1, key2, value2]
-    );
+    const result = await pool.Patient.findAll({
+      where: {
+        [key1]: value1,
+        [key2]: value2
+      },
+      raw: true
+    });
+    // console.log(result);
     return result;
   } catch (err) {
     console.log("error while executing searchPt query: ", err);
   }
 };
+// searchPt('id', '5', 'last_name', 'mzm')
 
 const deletePt = async (key1, value1, key2,value2) => {
   try {
-    console.log(key1, value1,key2,value2);
-    const [result] = await pool.query("DELETE FROM patients WHERE ?? = ? and ?? = ?;", [
-      key1,
-      value1,
-      key2,
-      value2
-    ]);
-    await pool.query("SET @num := 0;");
-    await pool.query("UPDATE patients SET id = @num := (@num + 1);");
-    await pool.query("ALTER TABLE patients AUTO_INCREMENT = 1;");
+    const result = await pool.Patient.destroy({
+      where:{
+      [key1]: value1,
+      [key2]: value2
+    }}
+    );
     return result;
   } catch (err) {
     console.log("error while executing deletePt query: ", err);
   }
 };
+// deletePt('first_name', 'Jennifer', 'last_name', 'Brown')
 
 const createPt = async (
   first_name,
@@ -68,8 +73,8 @@ const createPt = async (
   registration_date
 ) => {
   try {
-    const sql =
-      "INSERT INTO patients (first_name, last_name, age, gender, email, phone, address, city, state, country, postal_code, registration_date) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+    const sql = pool.Patient.create
+     
     const values = [
       first_name,
       last_name,
@@ -84,7 +89,7 @@ const createPt = async (
       postal_code,
       registration_date,
     ];
-    const [result] = await pool.query(sql, values);
+    const result = await pool.query(sql, values);
     // console.log(result);
     return result;
   } catch (err) {
