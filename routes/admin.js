@@ -23,12 +23,12 @@ route.post(
 // patient route
 route.get(
   "/patient/detail",
-  body("patient_id").isInt().withMessage("enter your valid patient id"),
+  body("id").isInt().withMessage("enter your valid patient id"),
   Middleware.authToken,
   patient.patient,
   (req, res) => {
     const id = req.body;
-    res.status(200).send("Error: Cannot get patient details");
+    res.status(200).send({message: req.msg});
   }
 );
 
@@ -36,14 +36,14 @@ route.post(
   "/patient/create",
   body("age").isInt().withMessage("enter a valid age"),
   body("email").isEmail().withMessage("enter a valid email"),
-  body("phone").isMobilePhone().withMessage("enter a valid phone number"),
-  body("postal_code").isPostalCode().withMessage("enter a valid postal code"),
+  body("phone"),//.isMobilePhone().withMessage("enter a valid phone number"),
+  body("postal_code"),//.isPostalCode().withMessage("enter a valid postal code"),
   body("registration_date").isDate().withMessage("enter a valid date"),
   body("password").isStrongPassword().withMessage("enter a strong password"),
   Middleware.authToken,
   patient.createPt,
   (req, res) => {
-    res.status(200).send("Error: Cannot create patient");
+    res.status(200).send({message: req.msg});
   }
 );
 
@@ -61,7 +61,7 @@ route.get(
   Middleware.authToken,
   patient.getAllPt,
   (req, res) => {
-    res.status(200).send("Error: Cannot get all patients");
+    res.status(200).send({message: req.msg});
   }
 );
 
@@ -70,7 +70,7 @@ route.get(
   Middleware.authToken,
   patient.searchPt,
   (req, res) => {
-    res.status(200).send("Error: Cannot search for patients");
+    res.status(200).send({message: req.msg});
   }
 );
 
@@ -80,24 +80,23 @@ route.post(
   body("experience_years")
     .isInt()
     .withMessage("enter a valid experience_years"),
-  body("contact_number")
-    .isMobilePhone()
-    .withMessage("enter a valid phone number"),
+  body("contact_number"),
+    // .isMobilePhone()
+    // .withMessage("enter a valid phone number"),
   body("email").isEmail().withMessage("enter a valid email"),
   body("password").isStrongPassword().withMessage("enter a strong password"),
   Middleware.authToken,
   doctor.createDoctor,
   (req, res) => {
-    res.status(200).send("Error: Cannot create doctor");
+    res.status(200).send({message: req.msg});
   }
 );
-
 route.delete(
   "/doctor/delete",
   Middleware.authToken,
   doctor.deleteDoctor,
   (req, res) => {
-    res.status(200).send("Error: Cannot delete doctor");
+    res.status(200).send({message: req.msg});
   }
 );
 
@@ -107,22 +106,15 @@ route.get(
   Middleware.authToken,
   doctor.doctor,
   (req, res) => {
-    res.status(200).send("Error: Cannot get doctor by ID");
+    res.status(200).send({message:req.msg});
   }
 );
 
 route.get("/doctor/all", Middleware.authToken, doctor.getAlldr, (req, res) => {
-  res.status(200).send("Error: Cannot get all doctors");
+  res.status(200).send({message: req.msg});
 });
 
-route.get(
-  "/doctor/search",
-  Middleware.authToken,
-  doctor.searchDoctor,
-  (req, res) => {
-    res.status(200).send("Error: Cannot search for doctors");
-  }
-);
+
 
 // appointment route
 route.post(
@@ -133,7 +125,7 @@ route.post(
   Middleware.authToken,
   appointment.createAp,
   (req, res) => {
-    res.status(200).send("Error: Cannot create appointment");
+    res.status(200).send({message: req.msg});
   }
 );
 
@@ -142,7 +134,7 @@ route.delete(
   Middleware.authToken,
   appointment.deleteAp,
   (req, res) => {
-    res.status(200).send("Error: Cannot delete appointment");
+    res.status(200).send({message: "successfully deleted"});
   }
 );
 
@@ -151,7 +143,7 @@ route.get(
   Middleware.authToken,
   appointment.getAllAp,
   (req, res) => {
-    res.status(200).send("Error: Cannot get all appointments");
+    res.status(200).send({message: req.msg});
   }
 );
 
@@ -161,7 +153,7 @@ route.get(
   Middleware.authToken,
   appointment.appointment,
   (req, res) => {
-    res.status(200).send("Error: Cannot get appointment by ID");
+    res.status(200).send({message: req.msg});
   }
 );
 
@@ -173,12 +165,12 @@ route.post(
   Middleware.authToken,
   admin.createAd,
   (req, res) => {
-    res.status(200).send("Error: Cannot create admin");
+    res.status(200).send({message: req.msg});
   }
 );
 
 route.delete("/delete", Middleware.authToken, admin.deleteAd, (req, res) => {
-  res.status(200).send("Error: Cannot delete admin");
+  res.status(200).send({message: req.msg});
 });
 
 route.get(

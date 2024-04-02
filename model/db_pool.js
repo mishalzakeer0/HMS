@@ -106,7 +106,8 @@ const Doctor =  sequelize.define('doctor', {
   },
 },
 {
-  freezeTableName: true
+  freezeTableName: true,
+  timestamps: false
 })
 
 const Admin = sequelize.define('admin', {
@@ -136,7 +137,8 @@ const Admin = sequelize.define('admin', {
   },
 },
 {
-  freezeTableName: true
+  freezeTableName: true,
+  timestamps: false
 })
 
 const Appointment =  sequelize.define('appointments', {
@@ -175,7 +177,8 @@ const Appointment =  sequelize.define('appointments', {
     onUpdate: Sequelize.literal('CURRENT_TIMESTAMP'),
   },
 },{
-  freezeTableName: true
+  freezeTableName: true,
+  timestamps: false
 }) 
 
 const Message = sequelize.define('message', {
@@ -206,7 +209,8 @@ const Message = sequelize.define('message', {
     allowNull: true,
   },
 },{
-  freezeTableName: true
+  freezeTableName: true,
+  timestamps: false
 })
 
 const Sync = async () => {
@@ -219,7 +223,7 @@ const Sync = async () => {
 }
 
 
-
+Sync()
 
 module.exports = {
   Patient,

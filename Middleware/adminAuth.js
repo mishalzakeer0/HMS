@@ -35,7 +35,7 @@ const adminLogin = async (req, res) => {
     const token = jwt.sign(
       { username: validAdmin[0].first_name },
       process.env.ADMIN_KEY,
-      { expiresIn: "125m" }
+      { expiresIn: "1d" }
     );
     res.status(200).send({ message: "Valid Admin", token });
   } catch (err) {

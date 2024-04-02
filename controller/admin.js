@@ -22,9 +22,10 @@ const getAllAd = async(req,res,next)=>{
 
 const deleteAd = async(req,res,next)=>{
     try{
-        const{key, value} = req.body;
-        const ad = await ad_db.deleteAdmin(key,value)
-        res.status(200).send(ad); 
+        const{id} = req.body;
+        const ad = await ad_db.deleteAdmin(id)
+        req.msg = ad
+        next()
     }catch(err){
         console.log("error while delete Admin",err);
     }
@@ -34,7 +35,8 @@ const createAd = async(req,res,next)=>{
     try{
         const{username, password, email} = req.body;
         const ad = await ad_db.createAdmin(username, password, email);
-        res.status(200).send(ad)
+        req.msg = ad
+        next()
         
     }catch(err){
         console.log("error in createAd",err)

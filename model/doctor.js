@@ -1,18 +1,21 @@
 const pool = require('./db_pool')
-const mysql = require('mysql2')
+
 
 const allDr = async () => {
   try {
-    const [result] = await pool.query("select * from doctor");
+    const result = await pool.Doctor.findAll({raw: true});
+    console.log(result);
     return result;
   } catch (err) {
     console.error("error executing allDr query: ", err);
   }
 };
+// allDr()
 
 const drById = async (id) =>{
     try{
-        const [result] = await pool.query("Select * from doctor where id = ?", id);
+        const result = await pool.Doctor.findOne({where:{id: id},raw: true});
+        console.log(result);
         return result;
     }
     
@@ -20,26 +23,19 @@ const drById = async (id) =>{
         console.log("error executing drById query ", err);
     }
 }
+// drById(2)
 
-const searchDr = async (key1, value1, key2, value2) => {
-    try {
-        // console.log(key, value);
-        const [result] = await pool.query("SELECT * FROM doctor WHERE ?? = ? and ?? = ?;", [key1, value1, key2, value2]);
-        // console.log(result);
-        return result;
-    } catch (err) {
-        console.log("error while executing searchDr query: ", err);
-       
-    }
-};
 
-const deleteDr = async (key, value) => {
+
+// searchDr('name','Dr. David Lee','contact_number','444-333-2222')
+const deleteDr = async (id) => {
     try {
-        console.log(key, value);
-        await pool.query("DELETE FROM doctor WHERE ?? = ?;", [key, value]);
-        await pool.query("SET @num := 0;");
-        await pool.query("UPDATE doctor SET id = @num := (@num + 1);");
-        await pool.query("ALTER TABLE doctor AUTO_INCREMENT = 1;");
+        
+        const result = await pool.Doctor.destroy({
+            where: {
+                [id]: id
+            }
+        });
         console.log(result);
         return result;
     } catch (err) {
@@ -47,12 +43,20 @@ const deleteDr = async (key, value) => {
         
     }
 };
+// deleteDr('id', 6)
 
-const createDr = async (name,specialization,experience_years,contact_number,email,address) => {
+const createDr = async (name,specialization,experience_years,contact_number,email,address,password) => {
     try {
-        const sql = ("INSERT INTO doctor VALUES ?,?,?,?,?,?");
-        const value = [name,specialization,experience_years,contact_number,email,address]
-        await pool.query("INSERT INTO doctor VALUES ?,?,?,?,?,?", [name,specialization,experience_years,contact_number,email,address]);
+        const result = await pool.Doctor.create({
+            name: name,
+            specialization: specialization,
+            experience_years: experience_years,
+            contact_number: contact_number,
+            email: email,
+            address: address,
+            password: password,
+            raw: true
+        });
         console.log(result);
         return result;
     } catch (err) {
@@ -62,12 +66,11 @@ const createDr = async (name,specialization,experience_years,contact_number,emai
 
 };
 
-searchDr('name','Dr. David Lee','contact_number','444-333-2222')
+// createDr("mishal", "neuro", 3, "123-123-1323", "mishalzakeer0@gmail.com", "jannah(H)", "password")
 
 module.exports = {
     allDr,
     drById,
-    searchDr,
     deleteDr,
     createDr
 }

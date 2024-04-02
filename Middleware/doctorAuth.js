@@ -34,7 +34,7 @@ const doctorLogin = async (req, res) => {
       throw new Error("Invalid credentials");
     }
     // Generate JWT token for authentication
-    const token = jwt.sign({ username: validUser[0].username }, process.env.USER_KEY, { expiresIn: "25m" });
+    const token = jwt.sign({ username: validUser[0].username }, process.env.USER_KEY, { expiresIn: "25d" });
     res.status(200).send({ message: "Valid Patient", token });
   } catch (err) {
     console.error("Error:", err.message);

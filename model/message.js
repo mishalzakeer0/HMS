@@ -1,52 +1,55 @@
+const { raw } = require('mysql2');
 const pool = require('./db_pool')
-const mysql = require('mysql2')
 
 const allMessages = async () => {
     try{
-        const [result] = await pool.query("select * from message")
+        const result = await pool.Message.findAll({raw: true})
+        // console.log(result);
         return result
     }
     catch(err) {
         console.error("error executing allMessage query: ",err);
     }
 }
-
-const messageById = async (id) =>{
-    pool.query("Select * from message where id = ?", id).then(([result])=>{
-        console.log(result)
-    })
-    .catch(err =>{
-        console.log("error executing messageById query ", err);
-    })
-}
-
+// allMessages() 
+const messageById = async (id) => {
+  try {
+    const result = await pool.Message.findOne({ where: { id: id }, raw: true });
+    // console.log(result);
+    // console.log(id);
+    return result;
+  } catch (err) {
+    console.log("error executing messageById query ", err);
+  }
+};
+// messageById(2)
 const deleteMessage = async (key1, value1, key2, value2) => {
     try {
-        await pool.query("DELETE FROM message WHERE ?? = ? and ?? = ?;", [key1, value1, key2, value2]);
-        await pool.query("SET @num := 0;");
-        await pool.query("UPDATE message SET id = @num := (@num + 1);");
-        const [result] = await pool.query("ALTER TABLE message AUTO_INCREMENT = 1;");
-        console.log(result);
+        const result = await pool.Message.destroy({
+            where: {
+                [key1]: value1,
+                [key2]: value2
+            },
+            raw: true
+        });
+        // console.log(result);
         return result;
     } catch (err) {
         console.log("error while executing deleteMessage query: ", err);
         
     }
 };
-
+// deleteMessage("first_name", "John", "last_name", "Doe")
 const createMessage = async (first_name, last_name, age, gender, message) => {
     try {
-        const sql = "INSERT INTO message (first_name, last_name, age, gender, message) VALUES (?,?,?,?,?)" 
-        const value = [first_name, last_name, age, gender, message]
-        const [result] = await pool.query(sql,value);
-        console.log(result)
+        const result = await pool.Message.create({first_name: first_name, last_name: last_name, age: age, gender: gender, message: message, raw: true});
+        // console.log(result)
         return result;
     } catch (err) {
         console.log("error while executing createMessage query: ", err);
     }
-
 };
-
+// createMessage("mishal", "zakeer", 18, "Male", "say my name !!")
 module.exports = {
     allMessages,
     messageById,

@@ -1,33 +1,39 @@
 const ap_db = require('../model/appointment');
 const {body , validationResult} = require('express-validator')
+
 const getAllAp = async(req,res,next)=>{
     try{
          const appointment = await ap_db.allAppointments();  
-         res.status(200).send(appointment);
+         req.msg = appointment
+         console.log(appointment);
+         next()
      }  catch(err){
          console.log("error while getting all appointment",err);
  }
  };
 
- const appointment = async(req,res,next)=>{
-    try{
-        const {appointment_id} = req.body
-        if (!errors.isEmpty()) {
-            res.status(401).send(errors.array()[0].msg)
-            
-          }
-        const ap = await ap_db.appointmentById(appointment_id);
-        res.status(200).send(ap);
-    } catch(err){
-        console.log("error while getting appoint by id",err);
-    }
-};
+ const appointment = async (req, res, next) => {
+   try {
+     const { appointment_id } = req.body;
+     const errors = validationResult(req)
+     if (!errors.isEmpty()) {
+         res.status(401).send(errors.array()[0].msg)
+         return errors
+     }
+     const ap = await ap_db.appointmentById(appointment_id);
+     req.msg = ap;
+     next();
+   } catch (err) {
+     console.log("error while getting appointment by id", err);
+   }
+ };
 
 const deleteAp = async(req,res,next)=>{
     try{
-        const{key1, value1, key2, value2} = req.body;
-        const pt = await ap_db.deleteAppointment(key1,value1,key2,value2)
-        res.status(200).send(pt); 
+        const{id} = req.body;
+        const ap = await ap_db.deleteAppointment(id)
+        req.msg = ap
+        next()
     }catch(err){
         console.log("error while deleting appointment", err);
     }
@@ -42,7 +48,8 @@ const createAp = async(req,res,next)=>{
             return errors
         }
         const ap = await ap_db.createAppointment(patient_id, doctor_id, appointment_date);
-        res.status(200).send(ap)
+        req.msg = ap
+        next()
         
     }catch(err){
         console.log("error while creating appointment",err)

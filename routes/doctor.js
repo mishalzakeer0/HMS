@@ -24,9 +24,9 @@ route.post(
   body("experience_years")
     .isInt()
     .withMessage("enter a valid experience_years"),
-  body("contact_number")
-    .isMobilePhone()
-    .withMessage("enter a valid phone number"),
+  body("contact_number"),
+    // .isMobilePhone()
+    // .withMessage("enter a valid phone number"),
   body("email").isEmail().withMessage("enter a valid email"),
   body("password").isStrongPassword().withMessage("enter a strong password"),
   doctor.createDoctor,
@@ -50,22 +50,6 @@ route.get(
   }
 );
 
-route.post(
-  "/patient/create",
-  body("age").isInt().withMessage("enter a valid age"),
-  body("email").isEmail().withMessage("enter a valid email"),
-  body("phone").isMobilePhone().withMessage("enter a valid phone number"),
-  body("postal_code").isPostalCode().withMessage("enter a valid postal code"),
-  body("registration_date").isDate().withMessage("enter a valid date"),
-  body("password").isStrongPassword().withMessage("enter a strong password"),
-  Middleware.authToken,
-  patient.createPt,
-  (req, res) => {
-    res
-      .status(200)
-      .send({ message: "Patient created successfully", result: result });
-  }
-);
 
 route.delete(
   "/patient/delete",
@@ -74,7 +58,7 @@ route.delete(
   (req, res) => {
     res
       .status(200)
-      .send({ message: "Patient deleted successfully", result: result });
+      .send({ message: "Patient deleted successfully"});
   }
 );
 
@@ -85,7 +69,7 @@ route.get(
   (req, res) => {
     res
       .status(200)
-      .send({ message: "All patients retrieved successfully", result: result });
+      .send({ message: "All patients retrieved successfully"});
   }
 );
 
@@ -96,7 +80,7 @@ route.post(
   (req, res) => {
     res
       .status(200)
-      .send({ message: "Patient search successful", result: result });
+      .send({ message: "Patient search successful"});
   }
 );
 
@@ -104,12 +88,9 @@ route.post(
 route.get("/all", Middleware.authToken, doctor.getAlldr, (req, res) => {
   res
     .status(200)
-    .send({ message: "All doctors retrieved successfully", result: result });
+    .send({ message: "All doctors retrieved successfully"});
 });
 
-route.get("/search", Middleware.authToken, doctor.searchDoctor, (req, res) => {
-  res.status(200).send({ message: "Doctor search successful", result: result });
-});
 
 // Appointment routes
 route.post(
@@ -122,7 +103,7 @@ route.post(
   (req, res) => {
     res
       .status(200)
-      .send({ message: "Appointment created successfully", result: result });
+      .send({ message: "Appointment created successfully"});
   }
 );
 
@@ -133,7 +114,7 @@ route.delete(
   (req, res) => {
     res
       .status(200)
-      .send({ message: "Appointment deleted successfully", result: result });
+      .send({ message: "Appointment deleted successfully"});
   }
 );
 
@@ -159,7 +140,7 @@ route.get(
   (req, res) => {
     res
       .status(200)
-      .send({ message: "Appointment retrieved successfully", result: result });
+      .send({ message: "Appointment retrieved successfully"});
   }
 );
 
@@ -172,7 +153,7 @@ route.post(
   (req, res) => {
     res
       .status(200)
-      .send({ message: "Message created successfully", result: result });
+      .send({ message: "Message created successfully"});
   }
 );
 
@@ -183,7 +164,7 @@ route.delete(
   (req, res) => {
     res
       .status(200)
-      .send({ message: "Message deleted successfully", result: result });
+      .send({ message: "Message deleted successfully"});
   }
 );
 
@@ -195,7 +176,7 @@ route.get(
   (req, res) => {
     res
       .status(200)
-      .send({ message: "Message retrieved successfully", result: result });
+      .send({ message: req.msg });
   }
 );
 
@@ -206,7 +187,7 @@ route.get(
   (req, res) => {
     res
       .status(200)
-      .send({ message: "All messages retrieved successfully", result: result });
+      .send({ message: req.msg});
   }
 );
 

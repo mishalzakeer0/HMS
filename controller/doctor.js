@@ -4,7 +4,8 @@ const dr_db = require('../model/doctor');
 const getAlldr = async(req,res,next)=>{
    try{
         const doctors = await dr_db.allDr();  
-        res.status(200).send(doctors);
+        req.msg = doctors
+        next()
     }  catch(err){
         throw err
 }
@@ -26,21 +27,14 @@ const doctor = async(req,res,next)=>{
     }
 };
 
-const searchDoctor = async(req,res,next)=>{
-    try{
-        const{key, value} = req.body;
-        const dr = await dr_db.searchDr(key,value)
-        res.status(200).send(dr);
-    }catch(err){
-        throw err
-    }
-}
+
 
 const deleteDoctor = async(req,res,next)=>{
     try{
-        const{key1, value1, key2, value2} = req.body;
-        const dr = await dr_db.deleteDr(key1,value1,key2,value2)
-        res.status(200).send(dr); 
+        const{id} = req.body;
+        const dr = await dr_db.deleteDr(id)
+        req.msg = dr 
+        next()
     }catch(err){
         throw err
     }
@@ -55,7 +49,7 @@ const createDoctor = async(req,res,next)=>{
             return errors            
         }
         const dr = await dr_db.createDr(name,specialization,experience_years,contact_number,email,address,password);
-        res.status(200).send(dr)
+        req.msg = dr
         
     }catch(err){
         throw err
@@ -67,7 +61,6 @@ const createDoctor = async(req,res,next)=>{
 module.exports = {
     getAlldr,
     doctor,
-    searchDoctor,
     deleteDoctor,
     createDoctor
 }

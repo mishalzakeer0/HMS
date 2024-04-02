@@ -43,11 +43,10 @@ const patientLogin = async (req, res, next) => {
     const token = jwt.sign(
       { username: validUser[0].first_name },
       process.env.USER_KEY,
-      { expiresIn: "125m" }
+      { expiresIn: "1d" }
     );
     const [{id}] = validUser 
       
-    res.status(200).send({ message: "Valid Patient", token, id });
 
     next();
   } catch (err) {

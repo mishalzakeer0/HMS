@@ -44,18 +44,18 @@ const searchPt = async (key1, value1, key2, value2) => {
 };
 // searchPt('id', '5', 'last_name', 'mzm')
 
-const deletePt = async (key1, value1, key2,value2) => {
+const deletePt = async (id) => {
   try {
     const result = await pool.Patient.destroy({
       where:{
-      [key1]: value1,
-      [key2]: value2
+      "id": [id]
     }, 
   raw: true}
-    );
-    return result;
+    )
+    return result
   } catch (err) {
     console.log("error while executing deletePt query: ", err);
+    
   }
 };
 // deletePt('first_name', 'Jennifer', 'last_name', 'Brown')
@@ -72,21 +72,49 @@ const createPt = async (
   state,
   country,
   postal_code,
-  registration_date
+  registration_date,
+  password
 ) => {
   try {
-    const result = pool.Patient.create({first_name: first_name, last_name: last_name, age: age, gender: gender, email: email, phone: phone, address: address, city: city, state: state, country: country, postal_code: postal_code, registration_date: registration_date})
-     
-;
-    
-    // console.log(result);
+    const result = await pool.Patient.create({
+      first_name: first_name,
+      last_name: last_name,
+      age: age,
+      gender: gender,
+      email: email,
+      phone: phone,
+      address: address,
+      city: city,
+      state: state,
+      country: country,
+      postal_code: postal_code,
+      registration_date: registration_date,
+      password: password,
+      raw: true
+    });
+    console.log("create pt", result);
     return result;
   } catch (err) {
     console.log("error while executing createPt query: ", err);
   }
 };
 
-// createPt('mz', 'mzm', 18, 'Male', 'mishal@bititude.com', '123-123-1243', 'jannah(H)', 'CL', 'IND', '673003', '2023-03-15');
+// createPt(
+//   "mz",
+//   "mzm",
+//   18,
+//   "Male",
+//   "mishal@bititude.com",
+//   "123-123-1243",
+//   "jannah(H)",
+//   "panniyankra",
+//   "CL",
+//   "IND",
+//   "673003",
+//   "2023-03-15",
+//   "Zakeer*07"
+
+// )
 
 module.exports = {
   allPt,
