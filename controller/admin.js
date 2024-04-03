@@ -12,9 +12,10 @@ const getAllAd = async(req,res,next)=>{
 
  const admin = async(req,res,next)=>{
     try{
-        const id = req.body
+        const {id} = req.body
         const ad = await ad_db.adminById(id);
-        res.status(200).send(ad);
+        req.msg = ad
+        next()
     } catch(err){
         console.log("admin by id failed",err);
     }

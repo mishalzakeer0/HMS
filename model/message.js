@@ -23,12 +23,11 @@ const messageById = async (id) => {
   }
 };
 // messageById(2)
-const deleteMessage = async (key1, value1, key2, value2) => {
+const deleteMessage = async (id) => {
     try {
         const result = await pool.Message.destroy({
             where: {
-                [key1]: value1,
-                [key2]: value2
+                "id": id
             },
             raw: true
         });

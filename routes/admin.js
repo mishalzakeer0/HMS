@@ -179,7 +179,7 @@ route.get(
   Middleware.authToken,
   admin.admin,
   (req, res) => {
-    res.status(200).send("Error: Cannot get admin by ID");
+    res.status(200).send({message: req.msg});
   }
 );
 
@@ -190,7 +190,7 @@ route.post(
   Middleware.authToken,
   message.createMsg,
   (req, res) => {
-    res.status(200).send("Error: Cannot create message");
+    res.status(200).send({message: `message created`});
   }
 );
 
@@ -199,7 +199,7 @@ route.delete(
   Middleware.authToken,
   message.deleteMsg,
   (req, res) => {
-    res.status(200).send("Error: Cannot delete message");
+    res.status(200).send({message: req.msg});
   }
 );
 
@@ -209,7 +209,7 @@ route.get(
   Middleware.authToken,
   message.msg,
   (req, res) => {
-    res.status(200).send("Error: Cannot get message by ID");
+    res.status(200).send({message: req.msg});
   }
 );
 
@@ -218,7 +218,7 @@ route.get(
   Middleware.authToken,
   message.getAllMsg,
   (req, res) => {
-    res.status(200).send("Error: Cannot get all messages");
+    res.status(200).send({message: req.msg});
   }
 );
 

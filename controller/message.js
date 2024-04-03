@@ -24,9 +24,10 @@ const getAllMsg = async(req,res,next)=>{
 
 const deleteMsg = async(req,res,next)=>{
     try{
-        const{key1, value1, key2, value2} = req.body;
-        const msg = await msg_db.deleteMessage(key1,value1,key2,value2)
-        return msg 
+        const{id} = req.body;
+        const msg = await msg_db.deleteMessage(id)
+        req.msg = msg 
+        next()
     }catch(err){
         throw err
     }
@@ -41,7 +42,8 @@ const createMsg = async(req,res,next)=>{
             
         }
         const msg = await msg_db.createMessage(first_name, last_name, age, gender, message);
-        return msg
+        req.msg = msg
+        next()
         
     }catch(err){
         throw err

@@ -15,6 +15,7 @@ const adminById = async (id) =>{
     try {
         const result = await pool.Admin.findOne({where: {id: id}, raw: true})
         // console.log(result)
+        return result
     } catch (err) {
         console.log("error executing adminById query ", err);
     }
@@ -22,11 +23,11 @@ const adminById = async (id) =>{
 }
 // adminById(4)
 
-const deleteAdmin = async (key, value) => {
+const deleteAdmin = async (id) => {
     try {
         const result = await pool.Admin.destroy({
             where: {
-                [key]: value
+                "id": id
             },
             raw: true
         });
