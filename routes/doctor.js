@@ -13,11 +13,8 @@ const { body } = require("express-validator");
 
 route.post(
   "/Login",
-  body("username").isEmail().withMessage("Enter a valid Email"),
   Middleware.doctorLogin,
-  (req, res) => {
-    res.status(200).send({ message: "Login Successful" });
-  }
+  
 );
 route.post(
   "/signup",
@@ -25,10 +22,6 @@ route.post(
     .isInt()
     .withMessage("enter a valid experience_years"),
   body("contact_number"),
-    // .isMobilePhone()
-    // .withMessage("enter a valid phone number"),
-  body("email").isEmail().withMessage("enter a valid email"),
-  body("password").isStrongPassword().withMessage("enter a strong password"),
   doctor.createDoctor,
   (req, res) => {
     res.status(200).send("Error: Cannot create account");
@@ -85,7 +78,7 @@ route.post(
 );
 
 // Doctor routes
-route.get("/all", Middleware.authToken, doctor.getAlldr, (req, res) => {
+route.get("/all",  doctor.getAlldr, (req, res) => {
   res
     .status(200)
     .send({ message: "All doctors retrieved successfully"});

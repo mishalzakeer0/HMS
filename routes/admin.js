@@ -110,7 +110,7 @@ route.get(
   }
 );
 
-route.get("/doctor/all", Middleware.authToken, doctor.getAlldr, (req, res) => {
+route.get("/doctor/all", doctor.getAlldr, (req, res) => {
   res.status(200).send({message: req.msg});
 });
 

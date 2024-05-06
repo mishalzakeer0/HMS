@@ -15,6 +15,7 @@ const authToken = (req, res, next) => {
   jwt.verify(token, process.env.USER_KEY, (err, user) => {
     if (err) return res.status(403).send({ error: "Forbidden" });
     req.user = user; // Attach patient data to request object
+    
     console.log('user',req.user);
     next();
   });
@@ -22,7 +23,7 @@ const authToken = (req, res, next) => {
 // Patient login
 const patientLogin = async (req, res, next) => {
   try {
-    // console.log("req body", req.body);
+    
     const { username, password } = req.body;
     // Validate patient credentials
     const validUser = await userValid.searchPt(
@@ -31,6 +32,7 @@ const patientLogin = async (req, res, next) => {
       "password",
       password
     );
+    
     const errors = validationResult(req)
     if (!errors.isEmpty()) {
       res.status(401).send(errors.array()[0].msg)   
@@ -45,14 +47,14 @@ const patientLogin = async (req, res, next) => {
       process.env.USER_KEY,
       { expiresIn: "1d" }
     );
-    const [{id}] = validUser 
-      
-
+    res.status(200).send({ message: "Valid Patient", token, username, password});
     next();
+
   } catch (err) {
     console.error("Error:", err.message);
     res.status(401).send({ error: err.message });
   }
+  
 };
 
 module.exports = {

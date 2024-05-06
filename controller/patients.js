@@ -77,10 +77,10 @@ const createPt = async (req, res, next) => {
       registration_date,
       password,
     } = req.body;
-    const errors = validationResult(req);
-    if (!errors.isEmpty()) {
-      res.status(401).send(errors.array()[0].msg);
-    }
+    // const errors = validationResult(req);
+    // if (!errors.isEmpty()) {
+    //   res.status(401).send(errors.array()[0].msg);
+    // }
     const pt = await pt_db.createPt(
       first_name,
       last_name,

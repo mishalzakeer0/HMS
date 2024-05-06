@@ -7,28 +7,25 @@ const patient = require("../controller/patients");
 const doctor = require("../controller/doctor");
 const appointment = require("../controller/appointment");
 const message = require("../controller/message");
-const { body, validationResult } = require("express-validator");
+const { body, validationResult, Result } = require("express-validator");
 
 route.post(
   "/Login",
-  body("username").isEmail().withMessage("enter a valid email"),
+  body("username"),
   Middleware.patientLogin,
-  (req, res) => {
-    res.status(200).send("Login Successful");
-  }
 );
 
 route.post(
   "/signup",
   body("age").isInt().withMessage("enter a valid age"),
   body("email").isEmail().withMessage("enter a valid email"),
-  body("phone"),//.isMobilePhone().withMessage("enter a valid phone number"),
-  body("postal_code"),//.isPostalCode().withMessage("enter a valid postal code"),
+  body("phone"),
+  body("postal_code"),
   body("registration_date").isDate().withMessage("enter a valid date"),
   body("password").isStrongPassword().withMessage("enter a strong password"),
   patient.createPt,
   (req, res) => {
-    res.status(200).send("Error: Cannot create account");
+    res.status(200).send("Account created succesfully");
   }
 );
 

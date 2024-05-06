@@ -36,7 +36,6 @@ const searchPt = async (key1, value1, key2, value2) => {
       },
       raw: true
     });
-    // console.log(result);
     return result;
   } catch (err) {
     console.log("error while executing searchPt query: ", err);

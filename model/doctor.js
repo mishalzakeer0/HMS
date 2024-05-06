@@ -11,6 +11,20 @@ const allDr = async () => {
   }
 };
 // allDr()
+const searchDr = async (key1, value1, key2, value2) => {
+    try {
+      const result = await pool.Doctor.findAll({
+        where: {
+          [key1]: value1,
+          [key2]: value2
+        },
+        raw: true
+      });
+      return result;
+    } catch (err) {
+      console.log("error while executing searchDr query: ", err);
+    }
+  };
 
 const drById = async (id) =>{
     try{
@@ -72,5 +86,6 @@ module.exports = {
     allDr,
     drById,
     deleteDr,
-    createDr
+    createDr,
+    searchDr
 }
