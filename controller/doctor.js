@@ -36,6 +36,7 @@ const deleteDoctor = async(req,res,next)=>{
         req.msg = dr 
         next()
     }catch(err){
+        console.log("error deleting dr")
         throw err
     }
 }
@@ -52,9 +53,12 @@ const createDoctor = async(req,res,next)=>{
         req.msg = dr
         
     }catch(err){
+        res.status(401).send(err,"Error while creating Doctor")
         throw err
 
+
     }
+    next()
 }
 
 

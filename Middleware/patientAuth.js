@@ -38,16 +38,17 @@ const patientLogin = async (req, res, next) => {
       res.status(401).send(errors.array()[0].msg)   
     }
     console.log(validUser)
+    const id = validUser.id
     if (validUser.length === 0) {
       throw new Error("Invalid credentials");
     }
     // Generate JWT token for authentication
     const token = jwt.sign(
-      { username: validUser[0].first_name },
+      { username: validUser.first_name},
       process.env.USER_KEY,
       { expiresIn: "1d" }
     );
-    res.status(200).send({ message: "Valid Patient", token, username, password});
+    res.status(200).send({ message: "Valid Patient", token, username, password, id});
     next();
 
   } catch (err) {

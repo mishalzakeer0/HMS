@@ -28,7 +28,7 @@ const searchDr = async (key1, value1, key2, value2) => {
 
 const drById = async (id) =>{
     try{
-        const result = await pool.Doctor.findOne({where:{id: id},raw: true});
+        const result = await pool.Doctor.findOne({where:{id: {id}},raw: true});
         console.log(result);
         return result;
     }
@@ -47,7 +47,7 @@ const deleteDr = async (id) => {
         
         const result = await pool.Doctor.destroy({
             where: {
-                [id]: id
+              id: id
             }
         });
         console.log(result);
@@ -57,7 +57,7 @@ const deleteDr = async (id) => {
         
     }
 };
-// deleteDr('id', 6)
+// deleteDr('id', 21)
 
 const createDr = async (name,specialization,experience_years,contact_number,email,address,password) => {
     try {
@@ -74,7 +74,8 @@ const createDr = async (name,specialization,experience_years,contact_number,emai
         console.log(result);
         return result;
     } catch (err) {
-        console.log("error while executing createDr query: ", err);
+      res.status(401).send(err,"Error while excuting createDr")
+      throw err
         
     }
 

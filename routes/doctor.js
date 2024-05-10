@@ -18,13 +18,13 @@ route.post(
 );
 route.post(
   "/signup",
-  body("experience_years")
-    .isInt()
-    .withMessage("enter a valid experience_years"),
-  body("contact_number"),
+  // body("experience_years")
+  //   .isInt()
+  //   .withMessage("enter a valid experience_years"),
+  // body("contact_number"),
   doctor.createDoctor,
   (req, res) => {
-    res.status(200).send("Error: Cannot create account");
+    res.status(200).send("Account created succesfully");
   }
 );
 

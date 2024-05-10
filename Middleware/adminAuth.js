@@ -10,10 +10,10 @@ app.use(express.json());
 const authToken = (req, res, next) => {
   const authHeader = req.headers["authorization"];
   const token = authHeader && authHeader.split(" ")[1];
-  if (token == null) return res.status(401).send({ error: "Unauthorized" });
+  if (token === null) return res.status(401).send({ error: "Unauthorized" });
   jwt.verify(token, process.env.ADMIN_KEY, (err, user) => {
     if (err) return res.status(403).send({ error: "Forbidden" });
-    req.user = user; // Attach patient data to request object
+    req.user = user; 
     
     next();
   });

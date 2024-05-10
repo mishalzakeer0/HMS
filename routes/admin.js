@@ -96,7 +96,7 @@ route.delete(
   Middleware.authToken,
   doctor.deleteDoctor,
   (req, res) => {
-    res.status(200).send({message: req.msg});
+    res.status(200).send({message: "doctor deleted"});
   }
 );
 

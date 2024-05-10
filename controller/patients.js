@@ -7,6 +7,7 @@ const getAllPt = async(req,res,next)=>{
    try{
         const patients = await pt_db.allPt();
         req.msg = patients
+        res.send(patients)
         next() 
     }  catch(err){
         console.log("error in get all patient",err);
@@ -51,6 +52,7 @@ const deletePt = async(req,res,next)=>{
           next()
         } else {
           res.status(404).send("Patient not found")
+          
           return
         }
         

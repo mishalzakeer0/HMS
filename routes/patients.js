@@ -46,23 +46,23 @@ route.get("/doctor/all", Middleware.authToken, doctor.getAlldr, (req, res) => {
 
 route.post(
   "/appointment/create",
-  body("patient_id").isInt().withMessage("enter your valid patient id"),
-  body("doctor_id").isInt().withMessage("enter a valid doctor id"),
-  body("appointment_date").isDate().withMessage("enter a valid date"),
+  // body("patient_id").isInt().withMessage("enter your valid patient id"),
+  // body("doctor_id").isInt().withMessage("enter a valid doctor id"),
+  // body("appointment_date").isDate().withMessage("enter a valid date"),
   Middleware.authToken,
   appointment.createAp,
   (req, res) => {
-    res.status(200).send("Error: Cannot create appointment");
+    res.status(200).send(" appointment Created successfully");
   }
 );
 
 route.post(
   "/message/create",
-  body("age").isInt().withMessage("enter a valid age"),
+  // body("age").isInt().withMessage("enter a valid age"),
   Middleware.authToken,
   message.createMsg,
   (req, res) => {
-    res.status(200).send("Error: Cannot create message");
+    res.status(200).send(" Message created succefully");
   }
 );
 

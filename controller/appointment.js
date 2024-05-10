@@ -41,12 +41,9 @@ const deleteAp = async(req,res,next)=>{
 
 const createAp = async(req,res,next)=>{
     try{
-        const{patient_id, doctor_id, appointment_date} = req.body;
-        const errors = validationResult(req)
-        if (!errors.isEmpty()) {
-            res.status(401).send(errors.array()[0].msg)
-            return errors
-        }
+        const{patient_id, doctor_id, appointment_date} = req.body
+        console.log(req.body, "body")
+        
         const ap = await ap_db.createAppointment(patient_id, doctor_id, appointment_date);
         req.msg = ap
         next()

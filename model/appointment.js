@@ -50,7 +50,7 @@ const createAppointment = async (patient_id, doctor_id, appointment_date,) => {
            raw: true
         });
         
-        //  console.log(result)
+         console.log(result, "resatdb")
         return result;
     } catch (err) {
         console.log("error while executing createAppointment query: ", err);

@@ -29,13 +29,18 @@ const ptById = async (id) => {
 
 const searchPt = async (key1, value1, key2, value2) => {
   try {
-    const result = await pool.Patient.findAll({
+    const result = await pool.Patient.findOne({
+      attributes: [
+        'id',
+      "first_name"],
       where: {
         [key1]: value1,
         [key2]: value2
       },
+      
       raw: true
     });
+    // console.log(result, "resss")
     return result;
   } catch (err) {
     console.log("error while executing searchPt query: ", err);
