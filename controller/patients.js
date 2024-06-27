@@ -1,6 +1,10 @@
 const { validationResult } = require('express-validator');
 const pt_db = require('../model/patients');
 const { msg } = require('./message');
+const sendEmail = require('./utils/sendEmail'); 
+const crypto = require('crypto');
+const { Op } = require('sequelize');
+const { Patient } = require('../model/db_pool');
 
 
 const getAllPt = async(req,res,next)=>{
@@ -62,6 +66,73 @@ const deletePt = async(req,res,next)=>{
     }
 }
 
+const resetPassword = async (req, res) => {
+  try {
+    const { token } = req.params;
+    const { newPassword } = req.body;
+    // console.log(token,"@@@@@@@@@@@@")
+    const user = await pt_db.searchExpire(token)
+    
+    if (!user) {
+      
+      return res.status(400).send("Invalid or expired token");
+    }
+
+  
+    // Update the user's password and clear the reset token and expiration date
+  
+
+    const changePassword =   await pt_db.updatePassword(newPassword, user);
+    
+    res.status(200).send("Password has been reset successfully");
+  } catch (err) {
+    console.log("Failed to reset password", err);
+    res.status(500).send("Server error");
+  }
+};
+
+
+
+const forgotPassword = async (req, res) => {
+  try {
+      // console.log(req.query,"!@#$%^&*()(*&^%$#@#$%^&*(")
+      const { email } = req.query;
+
+      const user = await pt_db.searchEmail(email)
+
+      if (!user) {
+          return res.status(404).send("User not found");
+      }
+
+      // Generate reset token and expiry
+      const resetToken = crypto.randomBytes(20).toString('hex');
+      const resetPasswordExpire = Date.now() + 10 * 60 * 1000; // Token valid for 10 minutes
+
+      // Save token and expiration to user record
+     const updateToken = await pt_db.updateToken(resetToken, resetPasswordExpire, email)
+
+      const resetUrl = `http://localhost:3000/PatientLogin/ForgotPassword/ResetPassword/${resetToken}`;
+
+      const message = `You are receiving this email because you (or someone else) has requested the reset of a password. Please click on the following link to reset your password: \n\n ${resetUrl}`;
+
+      const emailSent = await sendEmail({
+          email: user.email,
+          subject: 'Password Reset',
+          message,
+      });
+      // console.log(emailSent,"emailsent ivde")
+      if (emailSent) {
+          res.status(200).send('Email sent');
+      } else {
+          res.status(500).send('Failed to send email');
+      }
+  } catch (err) {
+      console.log(err);
+      res.status(500).send("Server error");
+  }
+};
+
+
 const createPt = async (req, res, next) => {
   try {
     const {
@@ -110,5 +181,7 @@ module.exports = {
     patient,
     searchPt,
     deletePt,
-    createPt
+    createPt,
+    forgotPassword,
+    resetPassword
 }

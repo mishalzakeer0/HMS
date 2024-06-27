@@ -2,7 +2,7 @@ const jwt = require("jsonwebtoken");
 const userValid = require("../model/patients");
 const express = require("express");
 const app = express();
-const { body, validationResult } = require('express-validator');
+const { body, validationResult } = require("express-validator");
 
 // Middleware to parse JSON bodies
 app.use(express.json());
@@ -15,15 +15,14 @@ const authToken = (req, res, next) => {
   jwt.verify(token, process.env.USER_KEY, (err, user) => {
     if (err) return res.status(403).send({ error: "Forbidden" });
     req.user = user; // Attach patient data to request object
-    
-    console.log('user',req.user);
+
+    console.log("user", req.user);
     next();
   });
 };
 // Patient login
 const patientLogin = async (req, res, next) => {
   try {
-    
     const { username, password } = req.body;
     // Validate patient credentials
     const validUser = await userValid.searchPt(
@@ -32,30 +31,30 @@ const patientLogin = async (req, res, next) => {
       "password",
       password
     );
-    
-    const errors = validationResult(req)
+
+    const errors = validationResult(req);
     if (!errors.isEmpty()) {
-      res.status(401).send(errors.array()[0].msg)   
+      res.status(401).send(errors.array()[0].msg);
     }
-    console.log(validUser)
-    const id = validUser.id
+    console.log(validUser);
+    const id = validUser.id;
     if (validUser.length === 0) {
       throw new Error("Invalid credentials");
     }
     // Generate JWT token for authentication
     const token = jwt.sign(
-      { username: validUser.first_name},
+      { username: validUser.first_name },
       process.env.USER_KEY,
       { expiresIn: "1d" }
     );
-    res.status(200).send({ message: "Valid Patient", token, username, password, id});
+    res
+      .status(200)
+      .send({ message: "Valid Patient", token, username, password, id });
     next();
-
   } catch (err) {
     console.error("Error:", err.message);
     res.status(401).send({ error: err.message });
   }
-  
 };
 
 module.exports = {

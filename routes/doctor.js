@@ -11,11 +11,7 @@ const { body } = require("express-validator");
 
 // Dr. Login
 
-route.post(
-  "/Login",
-  Middleware.doctorLogin,
-  
-);
+route.post("/Login", Middleware.doctorLogin);
 route.post(
   "/signup",
   // body("experience_years")
@@ -43,15 +39,12 @@ route.get(
   }
 );
 
-
 route.delete(
   "/patient/delete",
   Middleware.authToken,
   patient.deletePt,
   (req, res) => {
-    res
-      .status(200)
-      .send({ message: "Patient deleted successfully"});
+    res.status(200).send({ message: "Patient deleted successfully" });
   }
 );
 
@@ -60,9 +53,7 @@ route.get(
   Middleware.authToken,
   patient.getAllPt,
   (req, res) => {
-    res
-      .status(200)
-      .send({ message: "All patients retrieved successfully"});
+    res.status(200).send({ message: "All patients retrieved successfully" });
   }
 );
 
@@ -71,19 +62,14 @@ route.post(
   Middleware.authToken,
   patient.searchPt,
   (req, res) => {
-    res
-      .status(200)
-      .send({ message: "Patient search successful"});
+    res.status(200).send({ message: "Patient search successful" });
   }
 );
 
 // Doctor routes
-route.get("/all",  doctor.getAlldr, (req, res) => {
-  res
-    .status(200)
-    .send({ message: "All doctors retrieved successfully"});
+route.get("/all", doctor.getAlldr, (req, res) => {
+  res.status(200).send({ message: "All doctors retrieved successfully" });
 });
-
 
 // Appointment routes
 route.post(
@@ -94,9 +80,7 @@ route.post(
   body("appointment_date").isDate().withMessage("enter a valid date"),
   appointment.createAp,
   (req, res) => {
-    res
-      .status(200)
-      .send({ message: "Appointment created successfully"});
+    res.status(200).send({ message: "Appointment created successfully" });
   }
 );
 
@@ -105,9 +89,7 @@ route.delete(
   Middleware.authToken,
   appointment.deleteAp,
   (req, res) => {
-    res
-      .status(200)
-      .send({ message: "Appointment deleted successfully"});
+    res.status(200).send({ message: "Appointment deleted successfully" });
   }
 );
 
@@ -116,12 +98,10 @@ route.get(
   Middleware.authToken,
   appointment.getAllAp,
   (req, res) => {
-    res
-      .status(200)
-      .send({
-        message: "All appointments retrieved successfully",
-        result: result,
-      });
+    res.status(200).send({
+      message: "All appointments retrieved successfully",
+      result: result,
+    });
   }
 );
 
@@ -131,9 +111,7 @@ route.get(
   body("appointment_id").isInt().withMessage("enter a valid id"),
   appointment.appointment,
   (req, res) => {
-    res
-      .status(200)
-      .send({ message: "Appointment retrieved successfully"});
+    res.status(200).send({ message: "Appointment retrieved successfully" });
   }
 );
 
@@ -144,9 +122,7 @@ route.post(
   Middleware.authToken,
   message.createMsg,
   (req, res) => {
-    res
-      .status(200)
-      .send({ message: "Message created successfully"});
+    res.status(200).send({ message: "Message created successfully" });
   }
 );
 
@@ -155,9 +131,7 @@ route.delete(
   Middleware.authToken,
   message.deleteMsg,
   (req, res) => {
-    res
-      .status(200)
-      .send({ message: "Message deleted successfully"});
+    res.status(200).send({ message: "Message deleted successfully" });
   }
 );
 
@@ -167,9 +141,7 @@ route.get(
   Middleware.authToken,
   message.msg,
   (req, res) => {
-    res
-      .status(200)
-      .send({ message: req.msg });
+    res.status(200).send({ message: req.msg });
   }
 );
 
@@ -178,9 +150,7 @@ route.get(
   Middleware.authToken,
   message.getAllMsg,
   (req, res) => {
-    res
-      .status(200)
-      .send({ message: req.msg});
+    res.status(200).send({ message: req.msg });
   }
 );
 

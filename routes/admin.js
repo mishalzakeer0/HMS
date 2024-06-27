@@ -28,7 +28,7 @@ route.get(
   patient.patient,
   (req, res) => {
     const id = req.body;
-    res.status(200).send({message: req.msg});
+    res.status(200).send({ message: req.msg });
   }
 );
 
@@ -36,14 +36,14 @@ route.post(
   "/patient/create",
   body("age").isInt().withMessage("enter a valid age"),
   body("email").isEmail().withMessage("enter a valid email"),
-  body("phone"),//.isMobilePhone().withMessage("enter a valid phone number"),
-  body("postal_code"),//.isPostalCode().withMessage("enter a valid postal code"),
+  body("phone"),
+  body("postal_code"),
   body("registration_date").isDate().withMessage("enter a valid date"),
   body("password").isStrongPassword().withMessage("enter a strong password"),
   Middleware.authToken,
   patient.createPt,
   (req, res) => {
-    res.status(200).send({message: req.msg});
+    res.status(200).send({ message: req.msg });
   }
 );
 
@@ -52,7 +52,7 @@ route.delete(
   Middleware.authToken,
   patient.deletePt,
   (req, res) => {
-    res.status(200).send("Error: Cannot delete patient");
+    res.status(200).send(" patient deleted");
   }
 );
 
@@ -61,7 +61,7 @@ route.get(
   Middleware.authToken,
   patient.getAllPt,
   (req, res) => {
-    res.status(200).send({message: req.msg});
+    res.status(200).send({ message: req.msg });
   }
 );
 
@@ -70,7 +70,7 @@ route.get(
   Middleware.authToken,
   patient.searchPt,
   (req, res) => {
-    res.status(200).send({message: req.msg});
+    res.status(200).send({ message: req.msg });
   }
 );
 
@@ -81,14 +81,13 @@ route.post(
     .isInt()
     .withMessage("enter a valid experience_years"),
   body("contact_number"),
-    // .isMobilePhone()
-    // .withMessage("enter a valid phone number"),
+
   body("email").isEmail().withMessage("enter a valid email"),
   body("password").isStrongPassword().withMessage("enter a strong password"),
   Middleware.authToken,
   doctor.createDoctor,
   (req, res) => {
-    res.status(200).send({message: req.msg});
+    res.status(200).send({ message: req.msg });
   }
 );
 route.delete(
@@ -96,7 +95,7 @@ route.delete(
   Middleware.authToken,
   doctor.deleteDoctor,
   (req, res) => {
-    res.status(200).send({message: "doctor deleted"});
+    res.status(200).send({ message: "doctor deleted" });
   }
 );
 
@@ -106,15 +105,13 @@ route.get(
   Middleware.authToken,
   doctor.doctor,
   (req, res) => {
-    res.status(200).send({message:req.msg});
+    res.status(200).send({ message: req.msg });
   }
 );
 
 route.get("/doctor/all", doctor.getAlldr, (req, res) => {
-  res.status(200).send({message: req.msg});
+  res.status(200).send({ message: req.msg });
 });
-
-
 
 // appointment route
 route.post(
@@ -125,7 +122,7 @@ route.post(
   Middleware.authToken,
   appointment.createAp,
   (req, res) => {
-    res.status(200).send({message: req.msg});
+    res.status(200).send({ message: req.msg });
   }
 );
 
@@ -134,7 +131,7 @@ route.delete(
   Middleware.authToken,
   appointment.deleteAp,
   (req, res) => {
-    res.status(200).send({message: "successfully deleted"});
+    res.status(200).send({ message: "successfully deleted" });
   }
 );
 
@@ -143,7 +140,7 @@ route.get(
   Middleware.authToken,
   appointment.getAllAp,
   (req, res) => {
-    res.status(200).send({message: req.msg});
+    res.status(200).send({ message: req.msg });
   }
 );
 
@@ -153,7 +150,7 @@ route.get(
   Middleware.authToken,
   appointment.appointment,
   (req, res) => {
-    res.status(200).send({message: req.msg});
+    res.status(200).send({ message: req.msg });
   }
 );
 
@@ -165,12 +162,12 @@ route.post(
   Middleware.authToken,
   admin.createAd,
   (req, res) => {
-    res.status(200).send({message: req.msg});
+    res.status(200).send({ message: req.msg });
   }
 );
 
 route.delete("/delete", Middleware.authToken, admin.deleteAd, (req, res) => {
-  res.status(200).send({message: req.msg});
+  res.status(200).send({ message: req.msg });
 });
 
 route.get(
@@ -179,7 +176,7 @@ route.get(
   Middleware.authToken,
   admin.admin,
   (req, res) => {
-    res.status(200).send({message: req.msg});
+    res.status(200).send({ message: req.msg });
   }
 );
 
@@ -190,7 +187,7 @@ route.post(
   Middleware.authToken,
   message.createMsg,
   (req, res) => {
-    res.status(200).send({message: `message created`});
+    res.status(200).send({ message: `message created` });
   }
 );
 
@@ -199,7 +196,7 @@ route.delete(
   Middleware.authToken,
   message.deleteMsg,
   (req, res) => {
-    res.status(200).send({message: req.msg});
+    res.status(200).send({ message: req.msg });
   }
 );
 
@@ -209,7 +206,7 @@ route.get(
   Middleware.authToken,
   message.msg,
   (req, res) => {
-    res.status(200).send({message: req.msg});
+    res.status(200).send({ message: req.msg });
   }
 );
 
@@ -218,7 +215,7 @@ route.get(
   Middleware.authToken,
   message.getAllMsg,
   (req, res) => {
-    res.status(200).send({message: req.msg});
+    res.status(200).send({ message: req.msg });
   }
 );
 

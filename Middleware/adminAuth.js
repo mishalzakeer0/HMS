@@ -13,8 +13,8 @@ const authToken = (req, res, next) => {
   if (token === null) return res.status(401).send({ error: "Unauthorized" });
   jwt.verify(token, process.env.ADMIN_KEY, (err, user) => {
     if (err) return res.status(403).send({ error: "Forbidden" });
-    req.user = user; 
-    
+    req.user = user;
+
     next();
   });
 };
@@ -38,7 +38,7 @@ const adminLogin = async (req, res) => {
       process.env.ADMIN_KEY,
       { expiresIn: "1d" }
     );
-    res.status(200).send({ message: "Valid Admin", token, username, password});
+    res.status(200).send({ message: "Valid Admin", token, username, password });
   } catch (err) {
     console.error("Error:", err.message);
     res.status(401).send({ error: err.message });

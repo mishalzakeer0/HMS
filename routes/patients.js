@@ -65,5 +65,13 @@ route.post(
     res.status(200).send(" Message created succefully");
   }
 );
+route.get(
+  "/forgotPassword",
+  patient.forgotPassword,
+  (req, res) => {
+    res.status(200).send(req.msg);
+  }
+);
+route.post('/resetPassword/:token', patient.resetPassword);
 
 module.exports = route;
