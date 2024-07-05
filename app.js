@@ -7,10 +7,10 @@ const pool = require("./model/db_pool");
 const cors = require("cors");
 app.use(express.json());
 
-app.options("http://localhost:3000", cors({ origin: "http://localhost:3000" }));
+app.options("https://main--mzhms.netlify.app/", cors({ origin: "https://main--mzhms.netlify.app/" }));
 app.use(
   cors({
-    origin: "http://localhost:3000",
+    origin: "https://main--mzhms.netlify.app/",
     credentials: true,
   })
 );
