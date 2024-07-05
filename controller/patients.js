@@ -1,10 +1,8 @@
 const { validationResult } = require('express-validator');
 const pt_db = require('../model/patients');
-const { msg } = require('./message');
 const sendEmail = require('./utils/sendEmail'); 
 const crypto = require('crypto');
-const { Op } = require('sequelize');
-const { Patient } = require('../model/db_pool');
+
 
 
 const getAllPt = async(req,res,next)=>{
@@ -70,7 +68,6 @@ const resetPassword = async (req, res) => {
   try {
     const { token } = req.params;
     const { newPassword } = req.body;
-    // console.log(token,"@@@@@@@@@@@@")
     const user = await pt_db.searchExpire(token)
     
     if (!user) {
