@@ -7,7 +7,13 @@ const pool = require("./model/db_pool");
 const cors = require("cors");
 app.use(express.json());
 
-app.use(cors())
+app.options("*", cors({ origin: "*" }));
+app.use(
+  cors({
+    origin: "*",
+    credentials: true,
+  })
+);
 
 app.use("/patient", patientRoute);
 app.use("/admin", adminRoute);
