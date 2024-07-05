@@ -7,10 +7,10 @@ const pool = require("./model/db_pool");
 const cors = require("cors");
 app.use(express.json());
 
-app.options("*", cors({ origin: "*" }));
+app.options("https://6687dc083756a847e7160ed1--mzhms.netlify.app", cors({ origin: "https://6687dc083756a847e7160ed1--mzhms.netlify.app" }));
 app.use(
   cors({
-    origin: "*",
+    origin: "https://6687dc083756a847e7160ed1--mzhms.netlify.app",
     credentials: true,
   })
 );
