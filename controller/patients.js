@@ -108,7 +108,7 @@ const forgotPassword = async (req, res) => {
       // Save token and expiration to user record
      const updateToken = await pt_db.updateToken(resetToken, resetPasswordExpire, email)
 
-      const resetUrl = `http://localhost:3000/PatientLogin/ForgotPassword/ResetPassword/${resetToken}`;
+      const resetUrl = `https://hms-1-ohin.onrender.com/PatientLogin/ForgotPassword/ResetPassword/${resetToken}`;
 
       const message = `You are receiving this email because you (or someone else) has requested the reset of a password. Please click on the following link to reset your password: \n\n ${resetUrl}`;
 
