@@ -7,7 +7,7 @@ const pool = require("./model/db_pool");
 const cors = require("cors");
 app.use(express.json());
 
-const allowedOrigins = ["https://668b8f95101d2ce7e7ef2313--hms1mz.netlify.app"];
+const allowedOrigins = ["https://hmsmz1.netlify.app"];
 app.use(cors({
     origin: function(origin, callback){
         // allow requests with no origin (like mobile apps or curl requests)
