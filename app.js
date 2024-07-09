@@ -7,21 +7,11 @@ const pool = require("./model/db_pool");
 const cors = require("cors");
 app.use(express.json());
 
-const allowedOrigins = ["https://668d78dbe56cee0008a2766b--hmsmz1.netlify.app"];
 app.use(cors({
-    origin: function(origin, callback){
-        // allow requests with no origin (like mobile apps or curl requests)
-        if(!origin) return callback(null, true);
-        if(allowedOrigins.indexOf(origin) === -1){
-            const msg = 'The CORS policy for this site does not allow access from the specified Origin.';
-            return callback(new Error(msg), false);
-        }
-        return callback(null, true);
-    },
+    origin: true,
     credentials: true,
     optionsSuccessStatus: 200
 }));
-
 app.use("/patient", patientRoute);
 app.use("/admin", adminRoute);
 app.use("/doctor", doctorRoute);
