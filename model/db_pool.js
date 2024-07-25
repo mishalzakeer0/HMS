@@ -12,11 +12,13 @@ const sequelize = new Sequelize(
 
 const auth = async () => {
   try {
-    sequelize.authenticate().then(console.log("connection Successful"));
+    await sequelize.authenticate();
+    console.log("connection Successful");
   } catch (err) {
     console.log("error while connecting", err);
   }
 };
+
 
 auth();
 
