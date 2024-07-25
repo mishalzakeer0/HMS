@@ -1,9 +1,14 @@
 //db connection
 const Sequelize = require("sequelize");
-const sequelize = new Sequelize(process.env.MYSQL_ADDON_DB, process.env.MYSQL_ADDON_USER, process.env.MYSQL_ADDON_PASSWORD, {
-  host: process.env.MYSQL_ADDON_HOST, 
-  dialect: "mysql",
-});
+const sequelize = new Sequelize(
+  process.env.MYSQL_ADDON_DB,
+  process.env.MYSQL_ADDON_USER,
+  process.env.MYSQL_ADDON_PASSWORD,
+  {
+    host: process.env.MYSQL_ADDON_HOST,
+    dialect: "mysql",
+  }
+);
 
 const auth = async () => {
   try {
