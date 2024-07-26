@@ -1,73 +1,68 @@
----
-  name: CI/CD Pipeline
-  on:
-    workflow_dispatch:
-    push:
-      branches:
-        - main
-  jobs:
-    rsync-to-ec2-instance:
-      runs-on: ubuntu-22.04
-      steps:
-        - name: checkout
-          uses: actions/checkout@v3
-  
-        - name: Setup npm cache
-          uses: actions/cache@v3
-          with:
-            path: '~/.npm'
-            key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
-            restore-keys: |
-              ${{ runner.os }}-node-
-  
-        - name: Write .env file
-          run: >
-            rm -f .env
-  
-            echo "PORT=${{ secrets.PORT }}" > .env
-            echo "ADMIN_KEY=${{ secrets.ADMIN_KEY }}" >> .env
-            echo "USER_KEY=${{ secrets.USER_KEY }}" >> .env
-            echo "SMTP_HOST=${{ secrets.SMTP_HOST }}" >> .env
-            echo "SMTP_PORT=${{ secrets.SMTP_PORT }}" >> .env
-            echo "SMTP_MAIL=${{ secrets.SMTP_MAIL }}" >> .env
-            echo "SMTP_PASS=${{ secrets.SMTP_PASS }}" >> .env
-            echo "MYSQL_ADDON_DB=${{ secrets.MYSQL_ADDON_DB }}" >> .env
-            echo "MYSQL_ADDON_USER=${{ secrets.MYSQL_ADDON_USER }}" >> .env
-            echo "MYSQL_ADDON_PASSWORD=${{ secrets.MYSQL_ADDON_PASSWORD }}" >> .env
-            echo "MYSQL_ADDON_HOST=${{ secrets.MYSQL_ADDON_HOST }}" >> .env
-  
-        - name: Install Dependencies
-          run: PUPPETEER_SKIP_CHROMIUM_DOWNLOAD=true npm ci
-  
-        - name: Build
-          run: |
-            npm run build
-            PUPPETEER_SKIP_CHROMIUM_DOWNLOAD=true npm ci --omit=dev
-  
-        - name: Add Known Hosts
-          run: |
-            mkdir -p ~/.ssh/ && touch ~/.ssh/known_hosts
-            ssh-keyscan -H ${{ secrets.EC2_PUBLIC_IP }} >> ~/.ssh/known_hosts
-  
-        - name: Install ssh key
-          uses: shimataro/ssh-key-action@v2
-          with:
-            key: ${{ secrets.EC2_PRIVATE_KEY }}
-            known_hosts: 'just-a-placeholder-so-we-dont-get-errors'
-  
-        - name: Deploy using rsync
-          run: rsync -az --no-perms -O --no-group --no-owner . "${{ secrets.EC2_USER }}@${{ secrets.EC2_PUBLIC_IP }}:/home/ubuntu/HMS"
-  
-        - name: Run postdeploy scripts
-          uses: appleboy/ssh-action@v1.0.3
-          with:
-            host: ${{ secrets.EC2_PUBLIC_IP }}
-            username: ${{ secrets.EC2_USER }}
-            key: ${{ secrets.EC2_PRIVATE_KEY }}
-            port: 22
-            command_timeout: 30m
-            script: |
-              source /.nvm/nvm.sh;
-              cd /home/ubuntu/HMS/_work/HMS/HMS;
-              pm2 stop app.js;
-              pm2 start app.js;
+name: CI/CD Pipeline
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - main
+
+jobs:
+  rsync-to-ec2-instance:
+    runs-on: ubuntu-22.04
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Setup npm cache
+        uses: actions/cache@v3
+        with:
+          path: '~/.npm'
+          key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
+          restore-keys: |
+            ${{ runner.os }}-node-
+
+      - name: Write .env file
+        run: |
+          rm -f .env
+          echo "PORT=${{ secrets.PORT }}" > .env
+          echo "ADMIN_KEY=${{ secrets.ADMIN_KEY }}" >> .env
+          echo "USER_KEY=${{ secrets.USER_KEY }}" >> .env
+          echo "SMTP_HOST=${{ secrets.SMTP_HOST }}" >> .env
+          echo "SMTP_PORT=${{ secrets.SMTP_PORT }}" >> .env
+          echo "SMTP_MAIL=${{ secrets.SMTP_MAIL }}" >> .env
+          echo "SMTP_PASS=${{ secrets.SMTP_PASS }}" >> .env
+          echo "MYSQL_ADDON_DB=${{ secrets.MYSQL_ADDON_DB }}" >> .env
+          echo "MYSQL_ADDON_USER=${{ secrets.MYSQL_ADDON_USER }}" >> .env
+          echo "MYSQL_ADDON_PASSWORD=${{ secrets.MYSQL_ADDON_PASSWORD }}" >> .env
+          echo "MYSQL_ADDON_HOST=${{ secrets.MYSQL_ADDON_HOST }}" >> .env
+
+      - name: Install Dependencies
+        run: npm ci
+
+      - name: Add Known Hosts
+        run: |
+          mkdir -p ~/.ssh/ && touch ~/.ssh/known_hosts
+          ssh-keyscan -H ${{ secrets.EC2_PUBLIC_IP }} >> ~/.ssh/known_hosts
+
+      - name: Install SSH Key
+        uses: shimataro/ssh-key-action@v2
+        with:
+          key: ${{ secrets.EC2_PRIVATE_KEY }}
+          known_hosts: 'just-a-placeholder-so-we-dont-get-errors'
+
+      - name: Deploy using rsync
+        run: rsync -az --no-perms -O --no-group --no-owner . "${{ secrets.EC2_USER }}@${{ secrets.EC2_PUBLIC_IP }}:/home/ubuntu/HMS"
+
+      - name: Run Post-deploy Scripts
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{ secrets.EC2_PUBLIC_IP }}
+          username: ${{ secrets.EC2_USER }}
+          key: ${{ secrets.EC2_PRIVATE_KEY }}
+          port: 22
+          command_timeout: 30m
+          script: |
+            source ~/.nvm/nvm.sh
+            cd /home/ubuntu/HMS
+            pm2 stop app.js || true
+            pm2 start app.js --name app --env production
