@@ -20,13 +20,8 @@ jobs:
 
     - name: Install dependencies
       run: npm install
-      
-    - name: Debug SSH Configuration
-      run: |
-        echo "Private Key:"
-        cat /tmp/private_key.pem
-        echo "Testing SSH Connection"
-        ssh -o StrictHostKeyChecking=no -i /tmp/private_key.pem ubuntu@$EC2_PUBLIC_IP 'hostname'
+
+
     
 
   deploy:
