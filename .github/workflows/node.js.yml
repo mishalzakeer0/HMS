@@ -41,7 +41,7 @@ jobs:
 
       - name: Add Known Hosts
         run: |
-          mkdir -p ~/.ssh/ && touch ~/.ssh/known_hosts
+          mkdir -p ~/.ssh/
           ssh-keyscan -H ${{ secrets.EC2_PUBLIC_IP }} >> ~/.ssh/known_hosts
 
       - name: Install SSH Key
@@ -64,5 +64,5 @@ jobs:
           script: |
             source ~/.nvm/nvm.sh
             cd /home/ubuntu/HMS
-            pm2 stop app.js || true
+            pm2 stop app || true
             pm2 start app.js --name app --env production
