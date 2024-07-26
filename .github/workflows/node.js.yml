@@ -1,61 +1,29 @@
-name: CI/CD Pipeline
-
-on:
-  push:
-    branches:
-      - main
-
-jobs:
-  build:
-    runs-on: ubuntu-latest
-
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v3
-
-      - name: Set up Node.js
-        uses: actions/setup-node@v3
-        with:
-          node-version: '18'
-
-      - name: Install dependencies
-        run: npm install
-
-
-  deploy:
-    runs-on: ubuntu-latest
-    needs: build
-
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v3
-
-      - name: Set up Node.js
-        uses: actions/setup-node@v3
-        with:
-          node-version: '18'
-
-      - name: Generate SSH Key
-        run: |
-          ssh-keygen -b 2048 -t rsa -f /tmp/private_key -N ''
-          chmod 600 /tmp/private_key
-
-      - name: Add SSH Key to EC2 Instance
-        run: |
-          PUB_KEY_CONTENT="$(cat /tmp/private_key.pub)"
-          ssh -o StrictHostKeyChecking=no -i /tmp/private_key ubuntu@${{ secrets.EC2_PUBLIC_IP }} "echo '$PUB_KEY_CONTENT' >> ~/.ssh/authorized_keys"
-          ssh -o StrictHostKeyChecking=no -i /tmp/private_key ubuntu@${{ secrets.EC2_PUBLIC_IP }} "chmod 700 ~/.ssh && chmod 600 ~/.ssh/authorized_keys"
-        env:
-          EC2_PUBLIC_IP: ${{ secrets.EC2_PUBLIC_IP }}
-
-      - name: Deploy to EC2
-        run: |
-          ssh -o StrictHostKeyChecking=no -i /tmp/private_key ubuntu@${{ secrets.EC2_PUBLIC_IP }} << 'EOF'
-            cd /home/ubuntu/HMS
-            git pull
-            npm install
-
-            # Create .env file and set values
+---
+  name: deploy-to-staging
+  on:
+    workflow_dispatch:
+    push:
+      branches:
+        - staging
+  jobs:
+    rsync-to-ec2-instance:
+      runs-on: ubuntu-22.04
+      steps:
+        - name: checkout
+          uses: actions/checkout@v3
+  
+        - name: Setup npm cache
+          uses: actions/cache@v3
+          with:
+            path: '~/.npm'
+            key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
+            restore-keys: |
+              ${{ runner.os }}-node-
+  
+        - name: Write .env file
+          run: >
+            rm -f .env
+  
             echo "PORT=${{ secrets.PORT }}" > .env
             echo "ADMIN_KEY=${{ secrets.ADMIN_KEY }}" >> .env
             echo "USER_KEY=${{ secrets.USER_KEY }}" >> .env
@@ -67,11 +35,39 @@ jobs:
             echo "MYSQL_ADDON_USER=${{ secrets.MYSQL_ADDON_USER }}" >> .env
             echo "MYSQL_ADDON_PASSWORD=${{ secrets.MYSQL_ADDON_PASSWORD }}" >> .env
             echo "MYSQL_ADDON_HOST=${{ secrets.MYSQL_ADDON_HOST }}" >> .env
-
-            pm2 restart HMS
-          EOF
-        env:
-          EC2_PUBLIC_IP: ${{ secrets.EC2_PUBLIC_IP }}
-
-      - name: Clean Up SSH Key
-        run: rm /tmp/private_key /tmp/private_key.pub
+  
+        - name: Install Dependencies
+          run: PUPPETEER_SKIP_CHROMIUM_DOWNLOAD=true npm ci
+  
+        - name: Build
+          run: |
+            npm run build
+            PUPPETEER_SKIP_CHROMIUM_DOWNLOAD=true npm ci --omit=dev
+  
+        - name: Add Known Hosts
+          run: |
+            mkdir -p ~/.ssh/ && touch ~/.ssh/known_hosts
+            ssh-keyscan -H ${{ secrets.EC2_PUBLIC_IP }} >> ~/.ssh/known_hosts
+  
+        - name: Install ssh key
+          uses: shimataro/ssh-key-action@v2
+          with:
+            key: ${{ secrets.EC2_PRIVATE_KEY }}
+            known_hosts: 'just-a-placeholder-so-we-dont-get-errors'
+  
+        - name: Deploy using rsync
+          run: rsync -az --no-perms -O --no-group --no-owner . "${{ secrets.EC2_USER }}@${{ secrets.EC2_PUBLIC_IP }}:/home/ubuntu/HMS"
+  
+        - name: Run postdeploy scripts
+          uses: appleboy/ssh-action@v1.0.3
+          with:
+            host: ${{ secrets.EC2_PUBLIC_IP }}
+            username: ${{ secrets.EC2_USER }}
+            key: ${{ secrets.EC2_PRIVATE_KEY }}
+            port: 22
+            command_timeout: 30m
+            script: |
+              source /.nvm/nvm.sh;
+              cd /home/ubuntu/HMS/_work/HMS/HMS;
+              pm2 stop app.js;
+              pm2 start app.js;
