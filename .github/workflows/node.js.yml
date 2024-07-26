@@ -21,6 +21,7 @@ jobs:
       - name: Install dependencies
         run: npm install
 
+
   deploy:
     runs-on: ubuntu-latest
     needs: build
@@ -38,14 +39,14 @@ jobs:
         run: |
           ssh-keygen -b 2048 -t rsa -f /tmp/private_key -N ''
           chmod 600 /tmp/private_key
-        env:
-          EC2_PUBLIC_IP: ${{ secrets.EC2_PUBLIC_IP }}
 
       - name: Add SSH Key to EC2 Instance
         run: |
           PUB_KEY_CONTENT="$(cat /tmp/private_key.pub)"
           ssh -o StrictHostKeyChecking=no -i /tmp/private_key ubuntu@${{ secrets.EC2_PUBLIC_IP }} "echo '$PUB_KEY_CONTENT' >> ~/.ssh/authorized_keys"
           ssh -o StrictHostKeyChecking=no -i /tmp/private_key ubuntu@${{ secrets.EC2_PUBLIC_IP }} "chmod 700 ~/.ssh && chmod 600 ~/.ssh/authorized_keys"
+        env:
+          EC2_PUBLIC_IP: ${{ secrets.EC2_PUBLIC_IP }}
 
       - name: Deploy to EC2
         run: |
