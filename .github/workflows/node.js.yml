@@ -30,7 +30,7 @@ jobs:
     - name: Deploy to EC2
       run: |  # Multi-line string for complex commands
         ssh-keygen -b 2048 -t rsa -f /tmp/private_key -N ''  # Generate a temporary SSH key (less secure)
-        chmod 600 /tmp/private_key  # Set proper permissions
+        chmod 400 /tmp/private_key  # Set proper permissions
 
         # Replace <YOUR_EC2_PUBLIC_IP> with the actual public IP of your EC2 instance
         scp -o StrictHostKeyChecking=no /tmp/private_key ubuntu@175.41.212.54:/tmp/private_key.pem
