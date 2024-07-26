@@ -21,40 +21,50 @@ jobs:
     - name: Install dependencies
       run: npm install
 
-
   deploy:
     runs-on: ubuntu-latest
     needs: build
 
     steps:
     - name: Deploy to EC2
-      run: |  # Multi-line string for complex commands
-        ssh-keygen -b 2048 -t rsa -f /tmp/private_key -N ''  # Generate a temporary SSH key (less secure)
+      run: |
+        # Replace with your actual EC2 public IP
+        EC2_PUBLIC_IP=<YOUR_EC2_PUBLIC_IP>
+
+        # Generate a temporary SSH key (less secure)
+        ssh-keygen -b 2048 -t rsa -f /tmp/private_key -N '' 
         chmod 600 /tmp/private_key  # Set proper permissions
 
-        # Replace <YOUR_EC2_PUBLIC_IP> with the actual public IP of your EC2 instance
-        scp -o StrictHostKeyChecking=no /tmp/private_key ubuntu@<YOUR_EC2_PUBLIC_IP>:/tmp/private_key.pem
+        # Copy the public key to the EC2 instance
+        ssh-copy-id -i /tmp/private_key.pub -o StrictHostKeyChecking=no ubuntu@$EC2_PUBLIC_IP
 
-        # Automate copying the public key using ssh-copy-id
-        ssh-copy-id -i /tmp/private_key ubuntu@<YOUR_EC2_PUBLIC_IP>
-
-        ssh -o StrictHostKeyChecking=no ubuntu@<YOUR_EC2_PUBLIC_IP> << 'EOF'  # Indent the commands for proper parsing
+        # SSH into the EC2 instance and deploy the application
+        ssh -o StrictHostKeyChecking=no -i /tmp/private_key ubuntu@$EC2_PUBLIC_IP << 'EOF'
           cd /home/ubuntu/HMS
           git pull
           npm install
           pm2 restart HMS
 
-          # Create .env file and set values (consider using environment variables on the server)
-          echo "PORT=${{ secrets.PORT }}" > .env
-          echo "ADMIN_KEY=${{ secrets.ADMIN_KEY }}" >> .env
-          # ... (repeat for other secrets)
+          # Create .env file and set values (or manage env vars directly in PM2 or the shell environment)
+          echo "PORT=${PORT}" > .env
+          echo "ADMIN_KEY=${ADMIN_KEY}" >> .env
+          # Repeat for other environment variables...
 
           # Restart application
           pm2 restart HMS
         EOF
 
-        rm /tmp/private_key /tmp/private_key.pem  # Remove temporary key pair (more secure)
+        # Cleanup temporary keys
+        rm /tmp/private_key /tmp/private_key.pub
       env:
         PORT: ${{ secrets.PORT }}
         ADMIN_KEY: ${{ secrets.ADMIN_KEY }}
-        # ... (define other secrets)
+        USER_KEY: ${{ secrets.USER_KEY }}
+        SMTP_HOST: ${{ secrets.SMTP_HOST }}
+        SMTP_PORT: ${{ secrets.SMTP_PORT }}
+        SMTP_MAIL: ${{ secrets.SMTP_MAIL }}
+        SMTP_PASS: ${{ secrets.SMTP_PASS }}
+        MYSQL_ADDON_DB: ${{ secrets.MYSQL_ADDON_DB }}
+        MYSQL_ADDON_USER: ${{ secrets.MYSQL_ADDON_USER }}
+        MYSQL_ADDON_PASSWORD: ${{ secrets.MYSQL_ADDON_PASSWORD }}
+        MYSQL_ADDON_HOST: ${{ secrets.MYSQL_ADDON_HOST }}
