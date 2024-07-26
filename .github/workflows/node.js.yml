@@ -1,10 +1,10 @@
 ---
-  name: deploy-to-staging
+  name: CI/CD Pipeline
   on:
     workflow_dispatch:
     push:
       branches:
-        - staging
+        - main
   jobs:
     rsync-to-ec2-instance:
       runs-on: ubuntu-22.04
@@ -71,4 +71,3 @@
               cd /home/ubuntu/HMS/_work/HMS/HMS;
               pm2 stop app.js;
               pm2 start app.js;
-              
