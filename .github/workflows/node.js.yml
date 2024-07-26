@@ -66,3 +66,5 @@ jobs:
             cd /home/ubuntu/HMS
             pm2 stop app || true
             pm2 start app.js --name app --env production
+
+            
