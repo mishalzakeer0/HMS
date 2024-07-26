@@ -10,69 +10,70 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    - name: Checkout code
-      uses: actions/checkout@v3
+      - name: Checkout code
+        uses: actions/checkout@v3
 
-    - name: Set up Node.js
-      uses: actions/setup-node@v3
-      with:
-        node-version: '18'
+      - name: Set up Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '18'
 
-    - name: Install dependencies
-      run: npm install
+      - name: Install dependencies
+        run: npm install
+
+      - name: Run tests
+        run: npm test
 
   deploy:
     runs-on: ubuntu-latest
     needs: build
 
     steps:
-    - name: Deploy to EC2
-      run: |
-        # Replace with your actual EC2 public IP
-        EC2_PUBLIC_IP=175.41.212.54
+      - name: Checkout code
+        uses: actions/checkout@v3
 
-        # Generate a temporary SSH key (less secure)
-        ssh-keygen -b 2048 -t rsa -f /tmp/private_key -N ''
-        chmod 600 /tmp/private_key
+      - name: Set up Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '18'
 
-        # Manually add the public key to the EC2 instance's authorized_keys
-        PUB_KEY_CONTENT="$(cat /tmp/private_key.pub)"
-        ssh -o StrictHostKeyChecking=no -i /tmp/private_key ubuntu@$EC2_PUBLIC_IP "echo '$PUB_KEY_CONTENT' >> ~/.ssh/authorized_keys"
+      - name: Generate SSH Key
+        run: |
+          ssh-keygen -b 2048 -t rsa -f /tmp/private_key -N ''
+          chmod 600 /tmp/private_key
+        env:
+          EC2_PUBLIC_IP: ${{ secrets.EC2_PUBLIC_IP }}
 
-        # SSH into the EC2 instance and deploy the application
-        ssh -o StrictHostKeyChecking=no -i /tmp/private_key ubuntu@$EC2_PUBLIC_IP << 'EOF'
-          cd /home/ubuntu/HMS
-          git pull
-          npm install
+      - name: Add SSH Key to EC2 Instance
+        run: |
+          PUB_KEY_CONTENT="$(cat /tmp/private_key.pub)"
+          ssh -o StrictHostKeyChecking=no -i /tmp/private_key ubuntu@${{ secrets.EC2_PUBLIC_IP }} "echo '$PUB_KEY_CONTENT' >> ~/.ssh/authorized_keys"
+          ssh -o StrictHostKeyChecking=no -i /tmp/private_key ubuntu@${{ secrets.EC2_PUBLIC_IP }} "chmod 700 ~/.ssh && chmod 600 ~/.ssh/authorized_keys"
 
-          # Create .env file and set values
-          echo "PORT=${PORT}" > .env
-          echo "ADMIN_KEY=${ADMIN_KEY}" >> .env
-          echo "USER_KEY=${USER_KEY}" >> .env
-          echo "SMTP_HOST=${SMTP_HOST}" >> .env
-          echo "SMTP_PORT=${SMTP_PORT}" >> .env
-          echo "SMTP_MAIL=${SMTP_MAIL}" >> .env
-          echo "SMTP_PASS=${SMTP_PASS}" >> .env
-          echo "MYSQL_ADDON_DB=${MYSQL_ADDON_DB}" >> .env
-          echo "MYSQL_ADDON_USER=${MYSQL_ADDON_USER}" >> .env
-          echo "MYSQL_ADDON_PASSWORD=${MYSQL_ADDON_PASSWORD}" >> .env
-          echo "MYSQL_ADDON_HOST=${MYSQL_ADDON_HOST}" >> .env
+      - name: Deploy to EC2
+        run: |
+          ssh -o StrictHostKeyChecking=no -i /tmp/private_key ubuntu@${{ secrets.EC2_PUBLIC_IP }} << 'EOF'
+            cd /home/ubuntu/HMS
+            git pull
+            npm install
 
-          # Restart application using PM2
-          pm2 restart HMS
-        EOF
+            # Create .env file and set values
+            echo "PORT=${{ secrets.PORT }}" > .env
+            echo "ADMIN_KEY=${{ secrets.ADMIN_KEY }}" >> .env
+            echo "USER_KEY=${{ secrets.USER_KEY }}" >> .env
+            echo "SMTP_HOST=${{ secrets.SMTP_HOST }}" >> .env
+            echo "SMTP_PORT=${{ secrets.SMTP_PORT }}" >> .env
+            echo "SMTP_MAIL=${{ secrets.SMTP_MAIL }}" >> .env
+            echo "SMTP_PASS=${{ secrets.SMTP_PASS }}" >> .env
+            echo "MYSQL_ADDON_DB=${{ secrets.MYSQL_ADDON_DB }}" >> .env
+            echo "MYSQL_ADDON_USER=${{ secrets.MYSQL_ADDON_USER }}" >> .env
+            echo "MYSQL_ADDON_PASSWORD=${{ secrets.MYSQL_ADDON_PASSWORD }}" >> .env
+            echo "MYSQL_ADDON_HOST=${{ secrets.MYSQL_ADDON_HOST }}" >> .env
 
-        # Cleanup temporary keys
-        rm /tmp/private_key /tmp/private_key.pub
-      env:
-        PORT: ${{ secrets.PORT }}
-        ADMIN_KEY: ${{ secrets.ADMIN_KEY }}
-        USER_KEY: ${{ secrets.USER_KEY }}
-        SMTP_HOST: ${{ secrets.SMTP_HOST }}
-        SMTP_PORT: ${{ secrets.SMTP_PORT }}
-        SMTP_MAIL: ${{ secrets.SMTP_MAIL }}
-        SMTP_PASS: ${{ secrets.SMTP_PASS }}
-        MYSQL_ADDON_DB: ${{ secrets.MYSQL_ADDON_DB }}
-        MYSQL_ADDON_USER: ${{ secrets.MYSQL_ADDON_USER }}
-        MYSQL_ADDON_PASSWORD: ${{ secrets.MYSQL_ADDON_PASSWORD }}
-        MYSQL_ADDON_HOST: ${{ secrets.MYSQL_ADDON_HOST }}
+            pm2 restart HMS
+          EOF
+        env:
+          EC2_PUBLIC_IP: ${{ secrets.EC2_PUBLIC_IP }}
+
+      - name: Clean Up SSH Key
+        run: rm /tmp/private_key /tmp/private_key.pub
