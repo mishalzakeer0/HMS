@@ -42,10 +42,10 @@ jobs:
         MYSQL_ADDON_HOST: ${{ secrets.MYSQL_ADDON_HOST }}
       run: |
         ssh -o StrictHostKeyChecking=no -i /tmp/private_key.pem ubuntu@<YOUR_EC2_PUBLIC_IP> << 'EOF'
-          cd /path/to/your/application
+          cd /home/ubuntu/HMS
           git pull
           npm install
-          pm2 restart your-app-name
+          pm2 restart HMS
         EOF
           # Create .env file and set values
           echo "PORT=${PORT}" > .env
