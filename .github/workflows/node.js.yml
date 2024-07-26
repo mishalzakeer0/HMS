@@ -21,8 +21,8 @@ jobs:
     - name: Install dependencies
       run: npm install
 
-
-    
+    - name: Run tests
+      run: npm test
 
   deploy:
     runs-on: ubuntu-latest
@@ -30,25 +30,13 @@ jobs:
 
     steps:
     - name: Deploy to EC2
-      env:
-        PORT: ${{ secrets.PORT }}
-        ADMIN_KEY: ${{ secrets.ADMIN_KEY }}
-        USER_KEY: ${{ secrets.USER_KEY }}
-        SMTP_HOST: ${{ secrets.SMTP_HOST }}
-        SMTP_PORT: ${{ secrets.SMTP_PORT }}
-        SMTP_MAIL: ${{ secrets.SMTP_MAIL }}
-        SMTP_PASS: ${{ secrets.SMTP_PASS }}
-        MYSQL_ADDON_DB: ${{ secrets.MYSQL_ADDON_DB }}
-        MYSQL_ADDON_USER: ${{ secrets.MYSQL_ADDON_USER }}
-        MYSQL_ADDON_PASSWORD: ${{ secrets.MYSQL_ADDON_PASSWORD }}
-        MYSQL_ADDON_HOST: ${{ secrets.MYSQL_ADDON_HOST }}
       run: |
         ssh -o StrictHostKeyChecking=no -i /tmp/private_key.pem ubuntu@<YOUR_EC2_PUBLIC_IP> << 'EOF'
           cd /home/ubuntu/HMS
           git pull
           npm install
           pm2 restart HMS
-        EOF
+
           # Create .env file and set values
           echo "PORT=${PORT}" > .env
           echo "ADMIN_KEY=${ADMIN_KEY}" >> .env
@@ -61,9 +49,19 @@ jobs:
           echo "MYSQL_ADDON_USER=${MYSQL_ADDON_USER}" >> .env
           echo "MYSQL_ADDON_PASSWORD=${MYSQL_ADDON_PASSWORD}" >> .env
           echo "MYSQL_ADDON_HOST=${MYSQL_ADDON_HOST}" >> .env
-          
-          # Install dependencies and restart application
-          npm install
-          pm2 restart your-app-name
+
+          # Restart application
+          pm2 restart HMS
         EOF
-      shell: bash
+      env:
+        PORT: ${{ secrets.PORT }}
+        ADMIN_KEY: ${{ secrets.ADMIN_KEY }}
+        USER_KEY: ${{ secrets.USER_KEY }}
+        SMTP_HOST: ${{ secrets.SMTP_HOST }}
+        SMTP_PORT: ${{ secrets.SMTP_PORT }}
+        SMTP_MAIL: ${{ secrets.SMTP_MAIL }}
+        SMTP_PASS: ${{ secrets.SMTP_PASS }}
+        MYSQL_ADDON_DB: ${{ secrets.MYSQL_ADDON_DB }}
+        MYSQL_ADDON_USER: ${{ secrets.MYSQL_ADDON_USER }}
+        MYSQL_ADDON_PASSWORD: ${{ secrets.MYSQL_ADDON_PASSWORD }}
+        MYSQL_ADDON_HOST: ${{ secrets.MYSQL_ADDON_HOST }}
