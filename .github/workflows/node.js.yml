@@ -23,7 +23,8 @@ jobs:
 
       - name: Write .env file
         run: |
-          # ... (same as before)
+          mkdir -p ~/.ssh/
+          ssh-keyscan -H ${{ secrets.EC2_PUBLIC_IP }} >> ~/.ssh/known_hosts
 
       - name: Install Dependencies
         run: npm ci
