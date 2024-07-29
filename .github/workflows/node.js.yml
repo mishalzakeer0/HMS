@@ -23,16 +23,29 @@ jobs:
 
       - name: Write .env file
         run: |
-          mkdir -p ~/.ssh/
-          ssh-keyscan -H ${{ secrets.EC2_PUBLIC_IP }} >> ~/.ssh/known_hosts
+          rm -f .env
+          echo "PORT=${{ secrets.PORT }}" > .env
+          echo "ADMIN_KEY=${{ secrets.ADMIN_KEY }}" >> .env
+          echo "USER_KEY=${{ secrets.USER_KEY }}" >> .env
+          echo "SMTP_HOST=${{ secrets.SMTP_HOST }}" >> .env
+          echo "SMTP_PORT=${{ secrets.SMTP_PORT }}" >> .env
+          echo "SMTP_MAIL=${{ secrets.SMTP_MAIL }}" >> .env
+          echo "SMTP_PASS=${{ secrets.SMTP_PASS }}" >> .env
+          echo "MYSQL_ADDON_DB=${{ secrets.MYSQL_ADDON_DB }}" >> .env
+          echo "MYSQL_ADDON_USER=${{ secrets.MYSQL_ADDON_USER }}" >> .env
+          echo "MYSQL_ADDON_PASSWORD=${{ secrets.MYSQL_ADDON_PASSWORD }}" >> .env
+          echo "MYSQL_ADDON_HOST=${{ secrets.MYSQL_ADDON_HOST }}" >> .env
 
       - name: Install Dependencies
         run: npm ci
-
+      - name: Debug EC2 Public IP
+        run: echo "EC2 Public IP is ${{ secrets.EC2_PUBLIC_IP }}"
+      
       - name: Add Known Hosts
         run: |
-          mkdir -p ~/.ssh/ && touch ~/.ssh/known_hosts
+          mkdir -p ~/.ssh/
           ssh-keyscan -H ${{ secrets.EC2_PUBLIC_IP }} >> ~/.ssh/known_hosts
+      
 
       - name: Install SSH Key
         uses: shimataro/ssh-key-action@v2
